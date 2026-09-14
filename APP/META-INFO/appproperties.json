@@ -1,0 +1,21 @@
+{
+   "ManufacturerInfo":
+   {
+      "logoIcon":"logo.jpg",
+      "website":"http://www.hikvision.com",
+      "copyright":"copyright(C)-hikvision",
+      "companyName":"Demo"
+   },
+   "charge":0,
+   "StartupInfo":
+   {
+      "fileName":"cameraAbnormal.sh",
+      "type":"shell"
+   },
+   "opensourceLicense":"",
+   "appName":"cameraAbnormal",
+   "appID":"B2609e690",
+   "healthCheck":"",
+   "menuName":"cameraAbnormal",
+   "jumpPage":"html/index.html"
+}

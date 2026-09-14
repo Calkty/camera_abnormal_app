@@ -1,0 +1,47 @@
+{
+   "environment":
+   {
+      "chip":"H9",
+      "basePackage":
+      {
+         "minimumVersion":"1.0.0",
+         "maximumVersion":"",
+         "id":"OPDEVSDK"
+      }
+   },
+   "requirement":
+   {
+      "disk":200,
+      "NPU":
+      [
+         {
+            "gflops":0.1,
+            "id":1
+         }
+      ],
+      "memory":80,
+      "AImemory":200
+   },
+   "featureParam":{
+      "isSupportMultiChannel": true
+   },
+   "version":"0.1.1",
+   "authorizedType":"HIKVISION",
+   "dependencies":
+   {
+      "remote":
+      [
+         {
+            "id":"",
+            "version":""
+         }
+      ],
+      "local":
+      [
+         {
+            "id":"",
+            "version":""
+         }
+      ]
+   }
+}

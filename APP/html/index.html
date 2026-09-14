@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Camera Abnormal Detection</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .content {
+        padding-left: 40px;
+      }
+
+      .platformtitle {
+        margin: 10px 0;
+      }
+
+      h1 {
+        text-align: left;
+        color: #656565;
+      }
+
+      #liveview {
+        width: 600px;
+        height: 450px;
+        margin: 20px 0;
+        background: #343434;
+      }
+
+      .drawButtons {
+        margin: 10px auto;
+      }
+
+      .drawButtons input {
+        background-image: none;
+        background-color: #ffffff;
+        padding: 4px 8px;
+        margin: 0 10px 0 0;
+        line-height: normal;
+        border: 1px solid #8c8c8c;
+        cursor: pointer;
+        border-radius: 2px;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        width: 100px;
+      }
+
+      .drawButtons .selected {
+        background-color: red;
+        color: white;
+      }
+
+      .videoShield {
+        position: absolute;
+        margin: 0 auto;
+        background-color: transparent;
+      }
+
+      .liveviewBlock {
+        position: relative;
+      }
+
+      #liveviewCanvas {
+        background-color: transparent;
+        border: none;
+        position: absolute;
+        width: 600px;
+        height: 450px;
+        top: 0px;
+      }
+
+      .liveviewShadow {
+        border: none;
+        position: absolute;
+        width: 600px;
+        height: 450px;
+        top: 0px;
+        background: url(transparent.png);
+      }
+
+      #params {
+        margin: 10px auto;
+      }
+
+      #params div {
+        margin: 20px 0;
+      }
+
+      #params span {
+        width: 75px;
+        display: inline-block;
+      }
+
+      .save input {
+        padding: 7px 8px;
+        width: 165px;
+        border: 0;
+        border-radius: 2px;
+        text-align: center;
+        white-space: nowrap;
+        cursor: pointer;
+        -webkit-user-select: none;
+        color: #ffffff;
+        background-color: #d71920;
+      }
+
+      .check-label {
+        font-size: 14px;
+        vertical-align: top;
+      }
+
+      .margin-left5 {
+        margin-left: 5px;
+      }
+
+      .aui_inner {
+        background: #ffffff;
+      }
+
+      .aui_titleBar {
+        width: 107%;
+        height: 0;
+        position: relative;
+        bottom: 31px;
+        left: -7px;
+      }
+
+      .aui_title {
+        height: 24px;
+        line-height: 24px;
+        padding: 0 25px 0 0;
+        text-indent: 10px;
+        color: #fff;
+        background-color: #343434;
+        font-size: 14px;
+      }
+
+      .aui_border {
+        border: solid 1px #000000;
+      }
+
+      .aui_close {
+        display: none !important;
+      }
+
+      .aui_content {
+        text-align: center;
+      }
+    </style>
+    <script src="script/jquery-1.11.1.js"></script>
+    <script src="script/jquery.cookie.js"></script>
+    <script src="script/excanvas.js"></script>
+    <script src="script/jquery.artDialog.source-4.1.6.js"></script>
+    <script src="script/jsPlugin-1.2.0.min.js"></script>
+    <script src="script/main.js"></script>
+  </head>
+
+  <body>
+    <div class="content">
+      <div class="platformtitle">
+        <h1>球机异常检测</h1>
+      </div>
+      <div id="channels">通道</div>
+      <div>
+        <span>
+          <input id="enable" type="checkbox" class="checkbox" />
+          <label class="check-label">启用</label>
+        </span>
+      </div>
+      <div class="liveviewBlock">
+        <div id="liveview"></div>
+        <iframe
+          id="liveviewShadow"
+          class="liveviewShadow"
+          src="transparent.html"
+          frameborder="0"
+          scrolling="no"
+          allowtransparency="true"
+        ></iframe>
+        <canvas id="liveviewCanvas" width="600" height="450"></canvas>
+      </div>
+      <div class="drawButtons">
+        <span>
+          <input
+            type="button"
+            id="drawBtn"
+            value="绘制规则"
+            onclick="demoInterface.draw()"
+          />
+        </span>
+      </div>
+      <div id="params"></div>
+      <div class="save">
+        <input type="button" value="保存" onclick="demoInterface.setParam()" />
+      </div>
+    </div>
+  </body>
+</html>

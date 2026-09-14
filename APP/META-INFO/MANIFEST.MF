@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+App-Name: camera_abnormal_app
+App-Version: 0.1.1
+Main-Script: cameraAbnormal.sh

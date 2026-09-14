@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<packageinfo xmlns="http://www.hikvision.com/compomentModel/0.5.0/packageinfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.hikvision.com/compomentModel/0.5.0/packageinfo ../../schema/0.5.0/packageinfo.xsd" docVersion="0.5.0">
+  <package xmlns="" type="HEOPPack" id="cameraAbnormal" version="0.1.1" />
+  <params xmlns="">
+    <param id="vendor.id" value="HIKVISION" />
+    <param id="vendor.zh_CN" value="海康威视" />
+    <param id="vendor.en_US" value="HIKVISION" />
+    <param id="UUID" value="7d4f9bd4-4a8f-4d8f-9e95-cameraabnormal" />
+    <param id="language" value="CN" />
+  </params>
+</packageinfo>

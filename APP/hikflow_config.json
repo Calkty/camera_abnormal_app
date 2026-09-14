@@ -1,0 +1,21 @@
+{
+	"@comment model_path": "model_path is model name which can be found in the input path of main function,required filed",
+	"@comment fps": "fps means algorithm processing frame rate,default is 12.5",
+	"@comment vb_cnt": "vb_cnt means buffer depth,which will be used to save store yuv scaled in the mscale module ",
+	"@comment b_alarm": "b_alarm means whether to do alarm processing,include jpeg encode,add&upload json message,option,default is 1",
+	"@comment alarm_interval": "alarm_interval means alarm frequency,unit is second,option,default is 1",
+	"@comment sel_class": "sel_class means the model attribute lable will be filterd, -1 means no filter,option,default is -1",
+	"@comment image_list": "we can find image files path in image_list,which is used in file-reading mode ",
+	"net": [{
+		"model_path": "Model_P_NPU0.bin",
+		"fps": 12.5,
+		"vb_cnt": 4
+	}],
+	"alarm": {
+		"b_alarm": 1,
+		"alarm_interval": 5,
+		"sel_class": 0
+	},
+	"image_list": "data/image_list.txt"
+
+}

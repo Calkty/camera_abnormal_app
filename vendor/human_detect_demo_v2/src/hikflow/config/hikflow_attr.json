@@ -1,0 +1,250 @@
+{
+	"@comment model_path": "name is model name,which is same to the model_path in hikfow_config.json",
+	"@comment attribute": "model attribute labeles, include index,which can be got from opdevsdk_hikflow_Process,name is used to shown in web",
+        "model":
+	[{
+                "name":"Model_P_NPU0.bin",
+		"attribute":
+		[{
+			"index": 0,
+			"name": "person"
+		},{
+			"index": 1,
+			"name": "bicycle"
+		},{
+			"index": 2,
+			"name": "car"
+		},{
+			"index": 3,
+			"name": "motorcycle"
+		},{
+			"index": 4,
+			"name": "airplane"
+		},{
+			"index": 5,
+			"name": "bus"
+		},{
+			"index": 6,
+			"name": "train"
+		},{
+			"index": 7,
+			"name": "truck"
+		},{
+			"index": 8,
+			"name": "boat"
+		},{
+			"index": 9,
+			"name": "traffic light"
+		},{
+			"index": 10,
+			"name": "fire hydrant"
+		},{
+			"index": 11,
+			"name": "stop sign"
+		},{
+			"index": 12,
+			"name": "parking meter"
+		},{
+			"index": 13,
+			"name": "bench"
+		},{
+			"index": 14,
+			"name": "bird"
+		},{
+			"index": 15,
+			"name": "cat"
+		},{
+			"index": 16,
+			"name": "dog"
+		},{
+			"index": 17,
+			"name": "horse"
+		},{
+			"index": 18,
+			"name": "sheep"
+		},{
+			"index": 19,
+			"name": "cow"
+		},{
+			"index": 20,
+			"name": "elephant"
+		},{
+			"index": 21,
+			"name": "bear"
+		},{
+			"index": 22,
+			"name": "zebra"
+		},{
+			"index": 23,
+			"name": "giraffe"
+		},{
+			"index": 24,
+			"name": "backpack"
+		},{
+			"index": 25,
+			"name": "umbrella"
+		},{
+			"index": 26,
+			"name": "handbag"
+		},{
+			"index": 27,
+			"name": "tie"
+		},{
+			"index": 28,
+			"name": "suitcase"
+		},{
+			"index": 29,
+			"name": "frisbee"
+		},{
+			"index": 30,
+			"name": "skis"
+		},{
+			"index": 31,
+			"name": "snowboard"
+		},{
+			"index": 32,
+			"name": "sports ball"
+		},{
+			"index": 33,
+			"name": "kite"
+		},{
+			"index": 34,
+			"name": "baseball bat"
+		},{
+			"index": 35,
+			"name": "baseball glove"
+		},{
+			"index": 36,
+			"name": "skateboard"
+		},{
+			"index": 37,
+			"name": "surfboard"
+		},{
+			"index": 38,
+			"name": "tennis racket"
+		},{
+			"index": 39,
+			"name": "bottle"
+		},{
+			"index": 40,
+			"name": "wine glass"
+		},{
+			"index": 41,
+			"name": "cup"
+		},{
+			"index": 42,
+			"name": "fork"
+		},{
+			"index": 43,
+			"name": "knife"
+		},{
+			"index": 44,
+			"name": "spoon"
+		},{
+			"index": 45,
+			"name": "bowl"
+		},{
+			"index": 46,
+			"name": "banana"
+		},{
+			"index": 47,
+			"name": "apple"
+		},{
+			"index": 48,
+			"name": "sandwich"
+		},{
+			"index": 49,
+			"name": "orange"
+		},{
+			"index": 50,
+			"name": "broccoli"
+		},{
+			"index": 51,
+			"name": "carrot"
+		},{
+			"index": 52,
+			"name": "hot dog"
+		},{
+			"index": 53,
+			"name": "pizza"
+		},{
+			"index": 54,
+			"name": "donut"
+		},{
+			"index": 55,
+			"name": "cake"
+		},{
+			"index": 56,
+			"name": "chair"
+		},{
+			"index": 57,
+			"name": "couch"
+		},{
+			"index": 58,
+			"name": "potted plant"
+		},{
+			"index": 59,
+			"name": "bed"
+		},{
+			"index": 60,
+			"name": "dining table"
+		},{
+			"index": 61,
+			"name": "toilet"
+		},{
+			"index": 62,
+			"name": "tv"
+		},{
+			"index": 63,
+			"name": "laptop"
+		},{
+			"index": 64,
+			"name": "mouse"
+		},{
+			"index": 65,
+			"name": "remote"
+		},{
+			"index": 66,
+			"name": "keyboard"
+		},{
+			"index": 67,
+			"name": "cell phone"
+		},{
+			"index": 68,
+			"name": "microwave"
+		},{
+			"index": 69,
+			"name": "oven"
+		},{
+			"index": 70,
+			"name": "toaster"
+		},{
+			"index": 71,
+			"name": "sink"
+		},{
+			"index": 72,
+			"name": "refrigerator"
+		},{
+			"index": 73,
+			"name": "book"
+		},{
+			"index": 74,
+			"name": "clock"
+		},{
+			"index": 75,
+			"name": "vase"
+		},{
+			"index": 76,
+			"name": "scissors"
+		},{
+			"index": 77,
+			"name": "teddy bear"
+		},{
+			"index": 78,
+			"name": "hair drier"
+		},{
+			"index": 79,
+			"name": "toothbrush"
+		}]
+	}]
+}
