@@ -1,0 +1,5 @@
+# Packaged HEOP installers are build outputs (created by pack.sh in APP/,
+# then moved to output/ by makeapp.sh). Never commit them: a stale .app left
+# in APP/ is packed into the next package and moved to output/ as well.
+APP/*.app
+/output/

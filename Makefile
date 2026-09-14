@@ -129,3 +129,4 @@ install: $(TARGET)
 clean:
 	rm -f $(TARGET) $(OBJS) $(HUMAN_OBJS)
 	rm -f .module-flags .module-flags.tmp
+	rm -f APP/cameraAbnormal_*.app
