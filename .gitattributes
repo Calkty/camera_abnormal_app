@@ -1,0 +1,43 @@
+# GitHub 语言统计（Linguist）与 Git 行为配置
+#
+# 目的：把第三方库、压缩产物、二进制数据排除出语言占比，只统计本项目代码。
+# 说明：Linguist 默认已把 vendor/ 目录视为第三方；这里显式写出便于阅读。
+#       提交并 push 到默认分支后，GitHub 才会重新统计语言占比。
+
+# ---------------------------------------------------------------------------
+# 第三方 JS 库（随海康 web demo 一起引入，不是本项目代码）
+# ---------------------------------------------------------------------------
+APP/html/script/jquery-1.11.1.js                 linguist-vendored
+APP/html/script/jquery.artDialog.source-4.1.6.js  linguist-vendored
+APP/html/script/jquery.cookie.js                  linguist-vendored
+APP/html/script/excanvas.js                       linguist-vendored
+# 海康播放器插件（含 Decoder.wasm）
+APP/html/script/playctrl/**                       linguist-vendored
+
+# 压缩/打包产物：既不统计语言，也不算“手写代码”
+*.min.js                                          linguist-generated linguist-vendored
+*.min.css                                         linguist-generated linguist-vendored
+
+# ---------------------------------------------------------------------------
+# 本项目的 UI 代码保留统计：APP/html/script/main.js、APP/html/*.html
+# 若连自定义页面一起排除，取消下面两行注释即可
+# ---------------------------------------------------------------------------
+# APP/html/script/main.js                         linguist-vendored
+# APP/html/**                                     linguist-vendored
+
+# ---------------------------------------------------------------------------
+# 第三方源码：海康 human_detect_demo_v2（约 1.7 万行 C/H）
+# Linguist 默认已排除 vendor/，此处显式声明；若要让它参与统计，去掉这两行
+# ---------------------------------------------------------------------------
+vendor/**                                         linguist-vendored
+
+# ---------------------------------------------------------------------------
+# 二进制/数据文件：标记为二进制，Git 不做文本 diff
+# ---------------------------------------------------------------------------
+*.o                                               binary
+*.a                                               binary
+*.app                                             binary
+*.bin                                             binary
+*.wasm                                            binary
+*.pyc                                             binary
+*.nv21                                            binary
