@@ -309,6 +309,7 @@ static void rtsp_loop(const AppConfig *cfg, PacketRing *ring, volatile int *runn
         uint8_t *payload;
         int len;
         if (read_exact(fd, hdr, 4) != CA_OK) {
+            ca_log("WARN", "DIAG RTSP header read ended: errno=%d (may be EOF)", errno);
             break;
         }
         if (hdr[0] != '$') {
@@ -320,9 +321,11 @@ static void rtsp_loop(const AppConfig *cfg, PacketRing *ring, volatile int *runn
         }
         payload = (uint8_t *)malloc((size_t)len);
         if (!payload) {
+            ca_log("ERR", "DIAG RTSP malloc failed: bytes=%d errno=%d", len, errno);
             break;
         }
         if (read_exact(fd, payload, len) != CA_OK) {
+            ca_log("WARN", "DIAG RTSP payload read ended: bytes=%d errno=%d (may be EOF)", len, errno);
             free(payload);
             break;
         }
@@ -331,8 +334,9 @@ static void rtsp_loop(const AppConfig *cfg, PacketRing *ring, volatile int *runn
             rtp_count++;
             rtp_bytes += len;
             if (ca_now_ms() - last_stat_ms >= 5000) {
-                ca_debug_log(1, "RTSP receive stat: rtp_packets=%d rtp_bytes=%d",
-                             rtp_count, rtp_bytes);
+                ca_log("INFO", "DIAG RTSP: elapsed_ms=%lld rtp_packets=%d rtp_bytes=%d fu_len=%d fu_cap=%d",
+                       (long long)(ca_now_ms() - last_stat_ms), rtp_count, rtp_bytes,
+                       parser.fu_len, parser.fu_cap);
                 rtp_count = 0;
                 rtp_bytes = 0;
                 last_stat_ms = ca_now_ms();

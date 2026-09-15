@@ -34,6 +34,7 @@ static int push_annexb(PacketRing *ring, CodecType codec, const uint8_t *nal, in
     int nal_type;
     int key = 0;
     int param = 0;
+    int rc;
     if (!nal || nal_len <= 0) {
         return CA_ERR;
     }
@@ -53,9 +54,9 @@ static int push_annexb(PacketRing *ring, CodecType codec, const uint8_t *nal, in
     memcpy(buf, g_start_code, sizeof(g_start_code));
     memcpy(buf + sizeof(g_start_code), nal, (size_t)nal_len);
     key = key || param;
-    ring_push(ring, buf, nal_len + (int)sizeof(g_start_code), pts_ms, recv_ms, key, param, codec);
+    rc = ring_push(ring, buf, nal_len + (int)sizeof(g_start_code), pts_ms, recv_ms, key, param, codec);
     free(buf);
-    return CA_OK;
+    return rc;
 }
 
 static int parse_rtp_header(const uint8_t *rtp, int rtp_len, const uint8_t **payload,

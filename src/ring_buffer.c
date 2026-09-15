@@ -26,7 +26,10 @@ static int packet_copy(EncodedPacket *dst, const EncodedPacket *src)
 
 static void save_param(uint8_t **dst, int *dst_len, const uint8_t *data, int size)
 {
-    uint8_t *p = (uint8_t *)malloc((size_t)size);
+    uint8_t *p;
+    /* Parameter sets are auxiliary copies, bounded to 3 * 64 KiB. */
+    if (size <= 0 || size > 65536) return;
+    p = (uint8_t *)malloc((size_t)size);
     if (!p) {
         return;
     }
@@ -59,17 +62,61 @@ static int nal_type(CodecType codec, const uint8_t *annexb, int size)
     return -1;
 }
 
-int ring_init(PacketRing *rb, int capacity, int ring_seconds)
+static int64_t ring_now_ms(void)
 {
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) return -1;
+    return (int64_t)ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+}
+
+/* Caller holds mutex. Always remove ownership before reusing a slot. */
+static void evict_oldest(PacketRing *rb)
+{
+    EncodedPacket *p = &rb->pkts[rb->head];
+    rb->payload_bytes -= (size_t)p->size;
+    packet_free(p);
+    rb->head = (rb->head + 1) % rb->capacity;
+    --rb->count;
+}
+
+static void prune_locked(PacketRing *rb, int64_t now)
+{
+    if (now < 0) return;
+    while (rb->count > 0 &&
+           now - rb->pkts[rb->head].stored_mono_ms >= (int64_t)rb->ring_seconds * 1000) {
+        evict_oldest(rb);
+        ++rb->evicted_time;
+    }
+}
+
+void ring_prune(PacketRing *rb)
+{
+    pthread_mutex_lock(&rb->mutex);
+    prune_locked(rb, ring_now_ms());
+    pthread_mutex_unlock(&rb->mutex);
+}
+
+int ring_init(PacketRing *rb, int capacity, int ring_seconds, size_t max_bytes)
+{
+    const char *value;
     memset(rb, 0, sizeof(*rb));
+    if (capacity <= 0 || ring_seconds <= 0 || max_bytes == 0) return CA_ERR;
     rb->pkts = (EncodedPacket *)calloc((size_t)capacity, sizeof(EncodedPacket));
     if (!rb->pkts) {
         return CA_ERR;
     }
     rb->capacity = capacity;
     rb->ring_seconds = ring_seconds;
-    pthread_mutex_init(&rb->mutex, NULL);
-    ca_debug_log(1, "ring_init: capacity=%d ring_seconds=%d", capacity, ring_seconds);
+    rb->max_bytes = max_bytes;
+    value = getenv("CA_DIAG_RING_DISCARD");
+    rb->discard = value && strcmp(value, "1") == 0;
+    if (pthread_mutex_init(&rb->mutex, NULL) != 0) {
+        free(rb->pkts);
+        memset(rb, 0, sizeof(*rb));
+        return CA_ERR;
+    }
+    ca_log("INFO", "RING limits: seconds=%d max_bytes=%llu capacity=%d discard=%d",
+           ring_seconds, (unsigned long long)max_bytes, capacity, rb->discard);
     return CA_OK;
 }
 
@@ -93,34 +140,50 @@ int ring_push(PacketRing *rb, const uint8_t *data, int size, int64_t pts_ms,
     EncodedPacket *slot;
     int idx;
     int type;
+    int64_t now;
     if (!data || size <= 0) {
         return CA_ERR;
     }
+    if (rb->discard) return CA_OK;
+    now = ring_now_ms();
+    if (now < 0) return CA_ERR;
     pthread_mutex_lock(&rb->mutex);
-    if (rb->count < rb->capacity) {
-        idx = (rb->head + rb->count) % rb->capacity;
-        rb->count++;
-    } else {
-        idx = rb->head;
-        rb->head = (rb->head + 1) % rb->capacity;
-        ca_debug_log(2, "ring overwrite: head=%d capacity=%d recv_ms=%lld",
-                     rb->head, rb->capacity, (long long)recv_ms);
-        packet_free(&rb->pkts[idx]);
+    prune_locked(rb, now);
+    if ((size_t)size > rb->max_bytes) {
+        ++rb->dropped_oversize;
+        pthread_mutex_unlock(&rb->mutex);
+        return CA_ERR;
     }
+    /* Free old payload BEFORE allocating the replacement: no double-sized peak. */
+    while (rb->count > 0 && rb->payload_bytes > rb->max_bytes - (size_t)size) {
+        evict_oldest(rb);
+        ++rb->evicted_bytes;
+    }
+    if (rb->count == rb->capacity) {
+        evict_oldest(rb);
+        ++rb->evicted_count;
+    }
+    idx = (rb->head + rb->count) % rb->capacity;
     slot = &rb->pkts[idx];
     slot->data = (uint8_t *)malloc((size_t)size);
     if (!slot->data) {
+        ++rb->alloc_failures;
         pthread_mutex_unlock(&rb->mutex);
+        ca_log("ERR", "DIAG ring malloc failed: requested_bytes=%d errno=%d", size, errno);
         return CA_ERR;
     }
     memcpy(slot->data, data, (size_t)size);
     slot->size = size;
     slot->pts_ms = pts_ms;
     slot->recv_ms = recv_ms;
+    slot->stored_mono_ms = now;
     slot->key_frame = key_frame;
     slot->is_param_set = is_param_set;
     slot->codec = codec;
     rb->codec = codec;
+    ++rb->count;
+    rb->payload_bytes += (size_t)size;
+    if (rb->payload_bytes > rb->peak_payload_bytes) rb->peak_payload_bytes = rb->payload_bytes;
 
     type = nal_type(codec, data, size);
     if (codec == CODEC_H264) {
@@ -146,7 +209,14 @@ int ring_snapshot(PacketRing *rb, EncodedPacket **out, int *out_count)
 {
     EncodedPacket *items;
     int i;
+    *out = NULL;
+    *out_count = 0;
     pthread_mutex_lock(&rb->mutex);
+    prune_locked(rb, ring_now_ms());
+    if (!rb->count) {
+        pthread_mutex_unlock(&rb->mutex);
+        return CA_OK;
+    }
     items = (EncodedPacket *)calloc((size_t)rb->count, sizeof(EncodedPacket));
     if (!items) {
         pthread_mutex_unlock(&rb->mutex);

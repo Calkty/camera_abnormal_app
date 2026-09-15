@@ -13,6 +13,59 @@
 
 static volatile int g_running = 1;
 
+/* Independent of RTSP progress and debug_level; never copies packet payloads. */
+static void ring_diag(PacketRing *rb)
+{
+    FILE *fp;
+    char line[256];
+    long rss = -1, hwm = -1, vm = -1;
+    fp = fopen("/proc/self/status", "r");
+    if (fp) {
+        while (fgets(line, sizeof(line), fp)) {
+            if (sscanf(line, "VmRSS: %ld", &rss) == 1) continue;
+            if (sscanf(line, "VmHWM: %ld", &hwm) == 1) continue;
+            if (sscanf(line, "VmSize: %ld", &vm) == 1) continue;
+        }
+        fclose(fp);
+    }
+    ca_log("INFO", "DIAG memory: rss_kb=%ld peak_rss_kb=%ld vm_kb=%ld", rss, hwm, vm);
+    if (rb) {
+        unsigned long long bytes = 0;
+        int i, count, cap, max_nal = 0;
+        int64_t oldest = 0, newest = 0;
+        size_t limit, peak;
+        unsigned long long by_time, by_bytes, by_count, oversize, failures;
+        if (pthread_mutex_trylock(&rb->mutex) != 0) {
+            ca_log("INFO", "DIAG ring: lock_busy");
+            return;
+        }
+        count = rb->count;
+        cap = rb->capacity;
+        limit = rb->max_bytes;
+        peak = rb->peak_payload_bytes;
+        by_time = rb->evicted_time;
+        by_bytes = rb->evicted_bytes;
+        by_count = rb->evicted_count;
+        oversize = rb->dropped_oversize;
+        failures = rb->alloc_failures;
+        for (i = 0; i < count; ++i) {
+            EncodedPacket *p = &rb->pkts[(rb->head + i) % cap];
+            if (!p->data || p->size <= 0) continue;
+            bytes += (unsigned long long)p->size;
+            if (p->size > max_nal) max_nal = p->size;
+            if (!oldest) oldest = p->recv_ms;
+            newest = p->recv_ms;
+        }
+        pthread_mutex_unlock(&rb->mutex);
+        ca_log("INFO", "DIAG ring: count=%d capacity=%d payload_bytes=%llu span_ms=%lld newest_age_ms=%lld max_nal_bytes=%d",
+               count, cap, bytes, (long long)(newest - oldest),
+               newest ? (long long)(ca_now_ms() - newest) : -1LL, max_nal);
+        ca_log("INFO", "DIAG ring limits: max_bytes=%llu peak_bytes=%llu evict_time=%llu evict_bytes=%llu evict_count=%llu oversize=%llu malloc_fail=%llu",
+               (unsigned long long)limit, (unsigned long long)peak,
+               by_time, by_bytes, by_count, oversize, failures);
+    }
+}
+
 static void on_signal(int sig)
 {
     (void)sig;
@@ -21,11 +74,9 @@ static void on_signal(int sig)
 
 static int ring_capacity_from_config(const AppConfig *cfg)
 {
-    int cap = cfg->ring_seconds * cfg->fps * 12;
-    if (cap < 8192) {
-        cap = 8192;
-    }
-    return cap;
+    (void)cfg;
+    /* Metadata slots only; retention is controlled by time AND payload bytes. */
+    return 4096;
 }
 
 int main(int argc, char **argv)
@@ -71,7 +122,8 @@ int main(int argc, char **argv)
     }
 
     if (CA_ENABLE_RING) {
-        if (ring_init(&ring, ring_capacity_from_config(&cfg), cfg.ring_seconds) != CA_OK)
+        if (ring_init(&ring, ring_capacity_from_config(&cfg), cfg.ring_seconds,
+                      (size_t)cfg.ring_max_mb * 1024 * 1024) != CA_OK)
             goto init_failed;
         ring_ready = 1;
     }
@@ -113,8 +165,19 @@ int main(int argc, char **argv)
         rc = 1;
     }
 
-    while (g_running) {
-        ca_sleep_ms(500);
+    ca_log("INFO", "DIAG build=ring-fix-v2 discard=%s ring_seconds=%d fps=%d debug=%d",
+           getenv("CA_DIAG_RING_DISCARD") ? getenv("CA_DIAG_RING_DISCARD") : "0",
+           cfg.ring_seconds, cfg.fps, cfg.debug_level);
+    if (CA_ENABLE_CLIP && (int64_t)cfg.ring_seconds < (int64_t)cfg.pre_seconds + cfg.post_seconds + 2)
+        ca_log("WARN", "ring retention is short for queued clips; video may be incomplete (pre=%d post=%d ring=%d)",
+               cfg.pre_seconds, cfg.post_seconds, cfg.ring_seconds);
+    {
+        int ticks = 0;
+        while (g_running) {
+            if (ring_ready) ring_prune(&ring); /* Also expire data when RTSP stops. */
+            if (ticks++ % 10 == 0) ring_diag(ring_ready ? &ring : NULL);
+            ca_sleep_ms(500);
+        }
     }
 
     ca_log("INFO", "stopping");

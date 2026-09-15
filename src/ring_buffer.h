@@ -10,6 +10,7 @@ typedef struct {
     int size;
     int64_t pts_ms;
     int64_t recv_ms;
+    int64_t stored_mono_ms; /* eviction uses monotonic time, independent of NTP */
     int key_frame;
     int is_param_set;
     CodecType codec;
@@ -21,6 +22,15 @@ typedef struct {
     int head;
     int count;
     int ring_seconds;
+    size_t payload_bytes;
+    size_t max_bytes;
+    size_t peak_payload_bytes;
+    unsigned long long evicted_time;
+    unsigned long long evicted_bytes;
+    unsigned long long evicted_count;
+    unsigned long long dropped_oversize;
+    unsigned long long alloc_failures;
+    int discard;
     CodecType codec;
     uint8_t *vps;
     int vps_len;
@@ -31,7 +41,8 @@ typedef struct {
     pthread_mutex_t mutex;
 } PacketRing;
 
-int ring_init(PacketRing *rb, int capacity, int ring_seconds);
+int ring_init(PacketRing *rb, int capacity, int ring_seconds, size_t max_bytes);
+void ring_prune(PacketRing *rb);
 void ring_destroy(PacketRing *rb);
 int ring_push(PacketRing *rb, const uint8_t *data, int size, int64_t pts_ms,
               int64_t recv_ms, int key_frame, int is_param_set, CodecType codec);

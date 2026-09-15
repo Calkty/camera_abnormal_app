@@ -1,0 +1,11 @@
+完整修复源码包 ring-fix-v2
+
+默认：ring_seconds=20，ring_max_mb=16，真实缓存开启。
+详细说明见 RING修复与测试.md。旧诊断版的 discard=1 不要保留。
+修改配置请修改根目录 app.conf；make install 会将它复制到 APP/app.conf。
+
+编译命令：
+sh makeapp.sh CC=aarch64-mix210-linux-gcc ENABLE_INFER=1 ENABLE_RING=1 ENABLE_CLIP=0 ENABLE_UPLOAD=0 ENABLE_LEGACY_ALARM=0
+
+安装 output 下新生成的 .app。启动确认 DIAG build=ring-fix-v2 discard=0。
+本包不含旧可执行文件和 .o；需要原 SDK 编译打包。已通过本机缓存逻辑测试，未在 ARM 设备验证。

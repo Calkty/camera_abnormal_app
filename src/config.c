@@ -35,7 +35,8 @@ void config_defaults(AppConfig *cfg)
     cfg->app_chan = -1;
     cfg->pre_seconds = 5;
     cfg->post_seconds = 10;
-    cfg->ring_seconds = 30;
+    cfg->ring_seconds = 20;
+    cfg->ring_max_mb = 16;
     cfg->max_events = 4;
     cfg->upload_retry = 3;
     cfg->upload_retry_interval_ms = 3000;
@@ -106,7 +107,27 @@ int config_load(const char *path, AppConfig *cfg)
         } else if (strcmp(line, "post_seconds") == 0) {
             cfg->post_seconds = atoi(eq + 1);
         } else if (strcmp(line, "ring_seconds") == 0) {
-            cfg->ring_seconds = atoi(eq + 1);
+            char *end;
+            long value;
+            errno = 0;
+            value = strtol(eq + 1, &end, 10);
+            if (errno || end == eq + 1 || *end || value < 1 || value > 3600) {
+                ca_log("ERR", "ring_seconds must be an integer in [1,3600]");
+                fclose(fp);
+                return CA_ERR;
+            }
+            cfg->ring_seconds = (int)value;
+        } else if (strcmp(line, "ring_max_mb") == 0) {
+            char *end;
+            long value;
+            errno = 0;
+            value = strtol(eq + 1, &end, 10);
+            if (errno || end == eq + 1 || *end || value < 1 || value > 64) {
+                ca_log("ERR", "ring_max_mb must be an integer in [1,64] MiB");
+                fclose(fp);
+                return CA_ERR;
+            }
+            cfg->ring_max_mb = (int)value;
         } else if (strcmp(line, "max_events") == 0) {
             cfg->max_events = atoi(eq + 1);
         } else if (strcmp(line, "upload_retry") == 0) {
@@ -128,9 +149,6 @@ int config_load(const char *path, AppConfig *cfg)
         }
     }
     fclose(fp);
-    if (cfg->ring_seconds < cfg->pre_seconds + 5) {
-        cfg->ring_seconds = cfg->pre_seconds + 5;
-    }
     if (cfg->max_events < 1) {
         cfg->max_events = 1;
     }
