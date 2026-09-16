@@ -20,6 +20,8 @@ typedef struct {
     int ring_max_mb; /* MiB of retained encoded video payload, not total RSS */
     int max_events;
     int upload_retry;
+    int delete_after_upload;
+    int clear_events_once;
     int upload_retry_interval_ms;
     int cooldown_seconds;
     int infer_interval_seconds;

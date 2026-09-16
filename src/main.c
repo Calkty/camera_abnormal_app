@@ -6,6 +6,7 @@
 #include "rtsp_client.h"
 #include "uploader.h"
 #include "module_flags.h"
+#include "startup_cleanup.h"
 
 #include <pthread.h>
 #include <signal.h>
@@ -115,11 +116,13 @@ int main(int argc, char **argv)
                  cfg.hikflow_model_path[0] ? cfg.hikflow_model_path : "(hikflow_config.json)",
                  cfg.abnormal_classes[0] ? cfg.abnormal_classes : "(sel_class fallback)");
 
-    if (CA_ENABLE_CLIP) {
+    if (CA_ENABLE_CLIP || cfg.clear_events_once) {
         if (ca_prepare_work_dir(&cfg) != CA_OK) {
             ca_log("ERR", "clip output dir unusable; clips will fail until work_dir is fixed");
+            if (cfg.clear_events_once) return 1;
         }
     }
+    if (clear_events_once(&cfg) != CA_OK) return 1;
 
     if (CA_ENABLE_RING) {
         if (ring_init(&ring, ring_capacity_from_config(&cfg), cfg.ring_seconds,
@@ -165,7 +168,7 @@ int main(int argc, char **argv)
         rc = 1;
     }
 
-    ca_log("INFO", "DIAG build=ring-fix-v2 discard=%s ring_seconds=%d fps=%d debug=%d",
+    ca_log("INFO", "DIAG build=clear-once-v4 discard=%s ring_seconds=%d fps=%d debug=%d",
            getenv("CA_DIAG_RING_DISCARD") ? getenv("CA_DIAG_RING_DISCARD") : "0",
            cfg.ring_seconds, cfg.fps, cfg.debug_level);
     if (CA_ENABLE_CLIP && (int64_t)cfg.ring_seconds < (int64_t)cfg.pre_seconds + cfg.post_seconds + 2)

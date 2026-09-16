@@ -51,6 +51,7 @@ SRCS = \
 	src/common.c \
 	src/main.c \
 	src/config.c \
+	src/startup_cleanup.c \
 	src/event_queue.c \
 	src/ring_buffer.c \
 	src/rtp_h26x.c \
@@ -102,6 +103,8 @@ FORCE:
 	@rm -f .module-flags.tmp
 
 $(OBJS) $(HUMAN_OBJS): src/module_flags.h .module-flags
+$(OBJS): src/config.h src/event_files.h
+$(OBJS): src/startup_cleanup.h
 
 src/%.o: src/%.c
 	$(CC) $(MODULE_DEFS) $(CORE_CFLAGS) $(CORE_INC) -c $< -o $@

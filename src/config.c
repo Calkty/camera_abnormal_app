@@ -39,6 +39,7 @@ void config_defaults(AppConfig *cfg)
     cfg->ring_max_mb = 16;
     cfg->max_events = 4;
     cfg->upload_retry = 3;
+    cfg->delete_after_upload = 1;
     cfg->upload_retry_interval_ms = 3000;
     cfg->cooldown_seconds = 20;
     cfg->infer_interval_seconds = 0;
@@ -132,6 +133,20 @@ int config_load(const char *path, AppConfig *cfg)
             cfg->max_events = atoi(eq + 1);
         } else if (strcmp(line, "upload_retry") == 0) {
             cfg->upload_retry = atoi(eq + 1);
+        } else if (strcmp(line, "delete_after_upload") == 0) {
+            if (strcmp(eq + 1, "0") != 0 && strcmp(eq + 1, "1") != 0) {
+                ca_log("ERR", "delete_after_upload must be 0 or 1");
+                fclose(fp);
+                return CA_ERR;
+            }
+            cfg->delete_after_upload = (eq[1] == '1');
+        } else if (strcmp(line, "clear_events_once") == 0) {
+            if (strcmp(eq + 1, "0") != 0 && strcmp(eq + 1, "1") != 0) {
+                ca_log("ERR", "clear_events_once must be 0 or 1");
+                fclose(fp);
+                return CA_ERR;
+            }
+            cfg->clear_events_once = (eq[1] == '1');
         } else if (strcmp(line, "upload_retry_interval_ms") == 0) {
             cfg->upload_retry_interval_ms = atoi(eq + 1);
         } else if (strcmp(line, "cooldown_seconds") == 0) {

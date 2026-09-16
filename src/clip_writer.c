@@ -1,4 +1,5 @@
 #include "clip_writer.h"
+#include "event_files.h"
 
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -129,7 +130,7 @@ static int write_json(const char *path, const AppConfig *cfg, const AbnormalEven
                       CodecType codec, const char *video_path, int packet_count,
                       int64_t clip_start_ms, int64_t clip_end_ms)
 {
-    FILE *fp = fopen(path, "wb");
+    FILE *fp = event_file_create(path);
     int written;
     if (!fp) {
         ca_log("ERR", "write_json open failed: %s errno=%d (%s)",
@@ -159,11 +160,13 @@ static int write_json(const char *path, const AppConfig *cfg, const AbnormalEven
         ca_log("ERR", "write_json write failed: %s errno=%d (%s)",
                path, errno, strerror(errno));
         fclose(fp);
+        event_file_delete(path, "clip_metadata_failed");
         return CA_ERR;
     }
     if (fclose(fp) != 0) {
         ca_log("ERR", "write_json close failed: %s errno=%d (%s)",
                path, errno, strerror(errno));
+        event_file_delete(path, "clip_metadata_failed");
         return CA_ERR;
     }
     return CA_OK;
@@ -185,7 +188,7 @@ static int write_clip_with_params(PacketRing *ring, const char *video_path, cons
         return CA_ERR;
     }
     codec = clip[start_idx].codec == CODEC_UNKNOWN ? cfg->codec : clip[start_idx].codec;
-    fp = fopen(video_path, "wb");
+    fp = event_file_create(video_path);
     if (!fp) {
         ca_log("ERR", "open clip video failed: %s errno=%d (%s)",
                video_path, errno, strerror(errno));
@@ -198,6 +201,7 @@ static int write_clip_with_params(PacketRing *ring, const char *video_path, cons
                        video_path, i, params[i].size, errno, strerror(errno));
                 packet_array_free(params, param_count);
                 fclose(fp);
+                event_file_delete(video_path, "clip_write_failed");
                 return CA_ERR;
             }
         }
@@ -213,15 +217,21 @@ static int write_clip_with_params(PacketRing *ring, const char *video_path, cons
             ca_log("ERR", "write clip packet failed: %s index=%d size=%d errno=%d (%s)",
                    video_path, i, clip[i].size, errno, strerror(errno));
             fclose(fp);
+            event_file_delete(video_path, "clip_write_failed");
             return CA_ERR;
         }
     }
     if (fclose(fp) != 0) {
         ca_log("ERR", "close clip video failed: %s errno=%d (%s)",
                video_path, errno, strerror(errno));
+        event_file_delete(video_path, "clip_close_failed");
         return CA_ERR;
     }
-    return write_json(meta_path, cfg, ev, codec, video_path, clip_count - start_idx, start_ms, end_ms);
+    if (write_json(meta_path, cfg, ev, codec, video_path, clip_count - start_idx, start_ms, end_ms) != CA_OK) {
+        event_file_delete(video_path, "clip_metadata_failed");
+        return CA_ERR;
+    }
+    return CA_OK;
 }
 
 static int build_clip(ClipWriterContext *ctx, const AbnormalEvent *ev, UploadJob *job)

@@ -1,4 +1,5 @@
 #include "uploader.h"
+#include "event_files.h"
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -287,6 +288,7 @@ void *upload_thread(void *arg)
 {
     UploadContext *ctx = (UploadContext *)arg;
     UploadJob job;
+    ca_log("INFO", "upload retention: delete_after_upload=%d", ctx->cfg->delete_after_upload);
     while (*ctx->running && upload_queue_pop(ctx->queue, &job) == CA_OK) {
         int i;
         int ok = 0;
@@ -299,6 +301,7 @@ void *upload_thread(void *arg)
             ca_sleep_ms(ctx->cfg->upload_retry_interval_ms);
         }
         ca_log(ok ? "INFO" : "ERR", "%s upload: %s", ok ? "confirmed" : "failed", job.video_path);
+        event_files_after_upload(ok, ctx->cfg->delete_after_upload, job.video_path, job.meta_path);
     }
     return NULL;
 }
