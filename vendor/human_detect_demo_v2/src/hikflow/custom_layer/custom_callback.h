@@ -22,9 +22,9 @@
 #define HIKFLOW_STS_ERR_CUS_LAYER_ALLOC_ERROR			(HIKFLOW_STS_ERR_CUS_LAYER_BASE + 5)
 #define HIKFLOW_STS_ERR_CUS_LAYER_FORWARD_FAILED		(HIKFLOW_STS_ERR_CUS_LAYER_BASE + 6)
 
-#include "custom_yolov8_custom_0_sub_0_layer.h"
-#include "custom_yolov8_custom_0_layer.h"
-#include "custom_yolov8_custom_0_sub_1_layer.h"
+#include "custom_v8_custom_0_layer.h"
+#include "custom_v8_custom_0_sub_0_layer.h"
+#include "custom_v8_custom_0_sub_1_layer.h"
 
 //#define DEBUG_CUSTOM_LAYER
 #ifdef DEBUG_CUSTOM_LAYER

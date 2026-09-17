@@ -12,6 +12,7 @@ feature. Keep the same Make flags when running `make install`.
 | ENABLE_CLIP | CA_ENABLE_CLIP | Event queue and local Annex-B clip generation |
 | ENABLE_UPLOAD | CA_ENABLE_UPLOAD | Upload queue, HTTP upload, retry and acknowledgement |
 | ENABLE_LEGACY_ALARM | CA_ENABLE_LEGACY_ALARM | Legacy alarm threads, audio initialization and post-detection JPEG/HEOP alarm linkage |
+| ENABLE_DETECT_OVERLAY | CA_ENABLE_DETECT_OVERLAY | Detection snapshot for the web overlay and its ISAPI endpoint, see DETECT_OVERLAY.md |
 
 CLIP requires RING. UPLOAD requires CLIP. Invalid combinations fail at compile
 time. LEGACY_ALARM has no effect when INFER is disabled. Basic POS target/text

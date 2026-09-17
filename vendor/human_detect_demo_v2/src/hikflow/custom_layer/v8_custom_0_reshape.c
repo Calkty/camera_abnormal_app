@@ -1,7 +1,7 @@
 #include "dsl_runtime.h"
-#include "yolov8_custom_0.h"
-#include "yolov8_custom_0_sub_0.h"
-#include "yolov8_custom_0_sub_1.h"
+#include "v8_custom_0.h"
+#include "v8_custom_0_sub_0.h"
+#include "v8_custom_0_sub_1.h"
 
 #define SUB_LEN 2
 #define SHAPE_LEN 4
@@ -10,15 +10,15 @@
 extern "C" {
 #endif
 
-DSL_DLL int yolov8_custom_0_Reshape(int32_t * dllp_iou_thresh_threshed_data_2_maxshape, int32_t * auxi_mem_size)
+DSL_DLL int v8_custom_0_Reshape(int32_t * dllp_iou_thresh_threshed_data_2_maxshape, int32_t * auxi_mem_size)
 {
     int32_t sub_output_shape[SUB_LEN * SHAPE_LEN] = {0};
     int32_t sub_output_size[SUB_LEN] = {0};
     int32_t sub_auxi_mem_size[SUB_LEN] = {0};
     int32_t tmp = 1;
 
-    yolov8_custom_0_sub_0_Reshape(&sub_output_shape[0 * SHAPE_LEN], &sub_auxi_mem_size[0]);
-    yolov8_custom_0_sub_1_Reshape(sub_output_shape[0 * SHAPE_LEN + 0], &sub_output_shape[1 * SHAPE_LEN], &sub_auxi_mem_size[1]);
+    v8_custom_0_sub_0_Reshape(&sub_output_shape[0 * SHAPE_LEN], &sub_auxi_mem_size[0]);
+    v8_custom_0_sub_1_Reshape(sub_output_shape[0 * SHAPE_LEN + 0], &sub_output_shape[1 * SHAPE_LEN], &sub_auxi_mem_size[1]);
 
     *auxi_mem_size = 0;
     for (int m = 0; m < SUB_LEN; m++)

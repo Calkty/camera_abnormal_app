@@ -1,14 +1,14 @@
 #include "dsl_runtime.h"
-#include "yolov8_custom_0_sub_1.h"
+#include "v8_custom_0_sub_1.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void yolov8_custom_0_sub_1_get_memsize(int32_t x_100, int32_t* auxi_mem_size)
+void v8_custom_0_sub_1_get_memsize(int32_t x_100, int32_t* auxi_mem_size)
 {
     DSL_DummyMemBuf total_buf = {0};
-    int32_t cse_var_6 = (x_100) * (80);
+    int32_t cse_var_6 = (x_100) * (6);
     int32_t cse_var_5 = (x_100) * (512);
     int32_t cse_var_4 = (x_100) * (4);
     int32_t cse_var_3 = (x_100) * (2);
@@ -66,14 +66,14 @@ void yolov8_custom_0_sub_1_get_memsize(int32_t x_100, int32_t* auxi_mem_size)
 
 
 
-DSL_DLL int yolov8_custom_0_sub_1_Reshape(int32_t x_100, int32_t * dllp_iou_thresh_threshed_data_2_maxshape, int32_t *auxi_mem_size)
+DSL_DLL int v8_custom_0_sub_1_Reshape(int32_t x_100, int32_t * dllp_iou_thresh_threshed_data_2_maxshape, int32_t *auxi_mem_size)
 {
     
     dllp_iou_thresh_threshed_data_2_maxshape[0] = OPC_MIN((x_100) * (2), (x_100) + (1000));
     dllp_iou_thresh_threshed_data_2_maxshape[1] = 7;
     
     
-    yolov8_custom_0_sub_1_get_memsize(x_100, auxi_mem_size);
+    v8_custom_0_sub_1_get_memsize(x_100, auxi_mem_size);
 
     return 0;
 }

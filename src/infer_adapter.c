@@ -1,5 +1,6 @@
 #include "infer_adapter.h"
 
+#include "detect_overlay.h"
 #include "event_bridge.h"
 #include "module_flags.h"
 
@@ -134,6 +135,14 @@ static int start_human_detect_demo(const AppConfig *cfg, EventQueue *queue)
     }
     pthread_attr_destroy(&attr);
     ca_debug_log(1, "legacy alarm threads started: alarm_server_task alarm_process");
+#endif
+
+#if CA_ENABLE_DETECT_OVERLAY
+    /* A display-only feature must never hold back detection, so a failure here
+     * only costs the web overlay, not the alarm chain. */
+    if (ca_detect_overlay_init() != CA_OK) {
+        ca_log("WARN", "detect overlay snapshot unavailable; web overlay stays empty");
+    }
 #endif
 
     ret = target_detect_opdevsdk_init(app_name_with_chan);

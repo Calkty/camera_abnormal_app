@@ -3,3 +3,7 @@
 # in APP/ is packed into the next package and moved to output/ as well.
 APP/*.app
 /output/
+
+# Local unit test binaries (built by hand with the host compiler, see tests/)
+tests/*.exe
+tests/*.o

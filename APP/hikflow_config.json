@@ -13,8 +13,8 @@
 	}],
 	"alarm": {
 		"b_alarm": 1,
-		"alarm_interval": 5,
-		"sel_class": 0
+		"alarm_interval": 1,
+		"sel_class": -1
 	},
 	"image_list": "data/image_list.txt"
 

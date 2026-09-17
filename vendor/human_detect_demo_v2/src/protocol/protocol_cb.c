@@ -8,13 +8,13 @@
 
 
 #ifndef SAFE_FREE
-#define SAFE_FREE(x) do { if ((x) != NULL) { free((x)); (x) = NULL;} } while(0) ///< °²È«ÊÍ·Å¶¯Ì¬·ÖÅäµÄÄÚ´æ
+#define SAFE_FREE(x) do { if ((x) != NULL) { free((x)); (x) = NULL;} } while(0) ///< ï¿½ï¿½È«ï¿½Í·Å¶ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½
 #endif
 #ifndef SAFE_FREE_JSON
 #define SAFE_FREE_JSON(x) do { if ((x) != NULL) { cJSON_Delete((x)); (x) = NULL;} } while(0)
 #endif
 
-#define SECURITY_INFO_MAX_LEN	256			// Ãô¸ÐÐÅÏ¢×î³¤³¤¶È£¬ÐèÒª¶¨³É2µÄÕûÊý±¶
+#define SECURITY_INFO_MAX_LEN	256			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½î³¤ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 op_devsdk_errno_code isapi_entry_callback(OP_DEVSDK_REQ_DES *p_req_des, OP_DEVSDK_RESP_DES *p_resp_des);
 
@@ -23,6 +23,7 @@ static opdevsdk_protoexten_callback g_opdevsdk_protoexten_context[] =
 {
 	{"cameraAbnormal/capabilities", 0, isapi_entry_callback},
     {"cameraAbnormal/config", 0, isapi_entry_callback},
+    {"cameraAbnormal/detections", 0, isapi_entry_callback},
 
 	{"", 0, NULL},
 };
@@ -83,7 +84,7 @@ INT32 json_resp_des(INT32 comb_status, WEB_DES*webinfo, CGI_PAGE* page)
 		
 		if( webinfo->resp->content_len <= 0 && NULL != webinfo->resp->httpbody)
 		{
-			//Èç¹û³¤¶ÈÖµÃ»ÓÐÉè¶¨£¬ÓÃÏìÓ¦ÄÚÈÝµÄ³¤¶È
+			//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÃ»ï¿½ï¿½ï¿½è¶¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ÝµÄ³ï¿½ï¿½ï¿½
 			webinfo->resp->content_len = strlen(webinfo->resp->httpbody);
 		}
         webinfo->resp->httpcode = 200;
@@ -189,8 +190,8 @@ op_devsdk_errno_code isapi_entry_callback(OP_DEVSDK_REQ_DES *p_req_des, OP_DEVSD
         p_req_des->jsonDoc = cJSON_Parse(p_req_des->httpbody);
         if(NULL == p_req_des->jsonDoc)
         {
-            /* ÒòÎªÖ§³ÖjsonºÍxmlºó£¬·ÀÖ¹jsonºÍxml»ìÂÒ·¢ËÍµ¼ÖÂµÄÉè±¸±ÀÀ£ÎÊÌâ£¬ÎÒÃÇÔÚ´øÓÐbodyµÄÇé¿öÏÂÖ±½Ó½âÎö£¬
-                Èç¹û½âÎöxml/json¸ñÊ½Ê§°Ü£¬Ö±½Ó·µ»ØÊ§°Ü£¬²»ÔÙ½øÈëÐ­ÒéÄÚ²¿´¦ÀíÁË */
+            /* ï¿½ï¿½ÎªÖ§ï¿½ï¿½jsonï¿½ï¿½xmlï¿½ó£¬·ï¿½Ö¹jsonï¿½ï¿½xmlï¿½ï¿½ï¿½Ò·ï¿½ï¿½Íµï¿½ï¿½Âµï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½bodyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó½ï¿½ï¿½ï¿½ï¿½ï¿½
+                ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xml/jsonï¿½ï¿½Ê½Ê§ï¿½Ü£ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Ù½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
                 
             opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "req->jsonDoc is NULL\n");
             
@@ -222,14 +223,14 @@ op_devsdk_errno_code isapi_entry_callback(OP_DEVSDK_REQ_DES *p_req_des, OP_DEVSD
     opdevsdk_write_log(OPDEVSDK_LOG_DEBUG, "tmppath:%s\n",tmppath);
 
 	memcpy(querytmpPath, p_req_des->uri_query, MIN(sizeof(querytmpPath), strlen(p_req_des->uri_query)));
-	/* urlÆ¥Åä */
+	/* urlÆ¥ï¿½ï¿½ */
 	if((NULL != strstr(tmppath, "/Custom/OpenPlatform/extern/cameraAbnormal/")))
 	{
         tmppath += strlen("/Custom/OpenPlatform/extern/cameraAbnormal/");
         opdevsdk_write_log(OPDEVSDK_LOG_DEBUG, "remainpath = %s, query_path=%s\n",tmppath, querytmpPath);
         if (0 == strcmp(tmppath, "capabilities"))
         {
-			/*ÔÝÊ±²»ÓÃchan ËùÓÐÍ¨µÀ¶¼ÊÇÐ´ËÀµÄÄÜÁ¦ µÈÐÂÔöÐèÇóÌáÉÏÀ´ºóÐèÒª*/
+			/*ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½chan ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª*/
             statuscode = isapi_target_detect_capabilities(*getnode, &web, tmppath, &page);	
         }
         else if (0 == strcmp(tmppath, "config"))
@@ -247,6 +248,11 @@ op_devsdk_errno_code isapi_entry_callback(OP_DEVSDK_REQ_DES *p_req_des, OP_DEVSD
             	statuscode = isapi_target_detect_ext(*getnode, &web, tmppath, &page);
 			}
         }
+        else if (0 == strcmp(tmppath, "detections"))
+        {
+            /* Read-only, polled by the web page: no channel state is touched. */
+            statuscode = isapi_target_detect_detections(*getnode, &web, tmppath, &page);
+        }
 	}
 	
 	else
@@ -259,7 +265,7 @@ op_devsdk_errno_code isapi_entry_callback(OP_DEVSDK_REQ_DES *p_req_des, OP_DEVSD
 	{
         opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "statuscode : COMBSTA_BUF_NOT_ENOUGH, [%s]\n",web.req->url);
 
-		// json:ÊÍ·ÅÄÚ´æ
+		// json:ï¿½Í·ï¿½ï¿½Ú´ï¿½
 		if(p_req_des->b_json)
 		{
 			SAFE_FREE_JSON(p_req_des->jsonDoc);
@@ -278,7 +284,7 @@ op_devsdk_errno_code isapi_entry_callback(OP_DEVSDK_REQ_DES *p_req_des, OP_DEVSD
 	}
 	
 
-	// json:ÊÍ·ÅÄÚ´æ
+	// json:ï¿½Í·ï¿½ï¿½Ú´ï¿½
 	if(p_req_des->b_json)
 	{
 		
@@ -286,7 +292,9 @@ op_devsdk_errno_code isapi_entry_callback(OP_DEVSDK_REQ_DES *p_req_des, OP_DEVSD
 		SAFE_FREE_JSON(page.json_root);
 		
 	}
-    opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "isapi_entry_callback, %s succ!\n", web.req->url);
+    /* The overlay polls detections several times per second, so a successful
+       request must not be logged at ERROR level or it floods the device log. */
+    opdevsdk_write_log(OPDEVSDK_LOG_DEBUG, "isapi_entry_callback, %s succ!\n", web.req->url);
 
 
 	return op_ret_val;
@@ -308,7 +316,7 @@ INT32 target_detect_opdevsdk_init(char *app_name_chan)
 	opdevsdk_ret = opdevsdk_init(app_name_chan, OPDEVSDK_MODE_PROTO_EXTEN);
 	if( op_devsdk_ok != opdevsdk_ret)
 	{
-        opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "[%s] opdevsdk_init failed, ret£»[%d]\n","humanDetect", opdevsdk_ret);
+        opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "[%s] opdevsdk_init failed, retï¿½ï¿½[%d]\n","humanDetect", opdevsdk_ret);
 		return -1 ;
 	}
 	op_callback_num = ( sizeof(g_opdevsdk_protoexten_context) / sizeof(opdevsdk_protoexten_callback) ) - 1;

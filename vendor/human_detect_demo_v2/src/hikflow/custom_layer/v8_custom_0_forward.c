@@ -1,7 +1,7 @@
 #include "dsl_runtime.h"
-#include "yolov8_custom_0.h"
-#include "yolov8_custom_0_sub_0.h"
-#include "yolov8_custom_0_sub_1.h"
+#include "v8_custom_0.h"
+#include "v8_custom_0_sub_0.h"
+#include "v8_custom_0_sub_1.h"
 
 #define SUB_LEN 2
 #define SHAPE_LEN 4
@@ -10,15 +10,15 @@
 extern "C" {
 #endif
 
-DSL_DLL int yolov8_custom_0_Forward(float * dllp_conf_thresh_1_obj_data, float * num_454_3_transpose, float * num_457_1_transpose, float * dllp_conf_thresh_2_gathernd_1_init_0, float * dllp_iou_thresh_threshed_data, int32_t * dllp_iou_thresh_threshed_data_2_shape, void * __auxi_mem_addr__)
+DSL_DLL int v8_custom_0_Forward(float * dllp_conf_thresh_1_obj_data, float * model_22_Concat_4_output_0_3_transpose, float * model_22_Sigmoid_output_0_1_transpose, float * dllp_conf_thresh_2_gathernd_1_init_0, float * dllp_iou_thresh_threshed_data, int32_t * dllp_iou_thresh_threshed_data_2_shape, void * __auxi_mem_addr__)
 {
     int32_t sub_output_shape[SUB_LEN * SHAPE_LEN] = {0};
     int32_t sub_output_size[SUB_LEN] = {0};
     int32_t sub_auxi_mem_size[SUB_LEN] = {0};
     int32_t tmp = 1;
 
-    yolov8_custom_0_sub_0_Reshape(&sub_output_shape[0 * SHAPE_LEN], &sub_auxi_mem_size[0]);
-    yolov8_custom_0_sub_1_Reshape(sub_output_shape[0 * SHAPE_LEN + 0], &sub_output_shape[1 * SHAPE_LEN], &sub_auxi_mem_size[1]);
+    v8_custom_0_sub_0_Reshape(&sub_output_shape[0 * SHAPE_LEN], &sub_auxi_mem_size[0]);
+    v8_custom_0_sub_1_Reshape(sub_output_shape[0 * SHAPE_LEN + 0], &sub_output_shape[1 * SHAPE_LEN], &sub_auxi_mem_size[1]);
 
     for (int m = 0; m < SUB_LEN; m++)
     {
@@ -39,9 +39,9 @@ DSL_DLL int yolov8_custom_0_Forward(float * dllp_conf_thresh_1_obj_data, float *
     void *__real_auxi_mem_addr__ = dllp_conf_thresh_threshed_data + sub_output_size[0];
 
     memset(__real_auxi_mem_addr__, 0, sub_auxi_mem_size[0]);
-    yolov8_custom_0_sub_0_Forward(dllp_conf_thresh_1_obj_data, num_454_3_transpose, num_457_1_transpose, dllp_conf_thresh_2_gathernd_1_init_0, dllp_conf_thresh_threshed_data, &sub_output_shape[0 * SHAPE_LEN], __real_auxi_mem_addr__);
+    v8_custom_0_sub_0_Forward(dllp_conf_thresh_1_obj_data, model_22_Concat_4_output_0_3_transpose, model_22_Sigmoid_output_0_1_transpose, dllp_conf_thresh_2_gathernd_1_init_0, dllp_conf_thresh_threshed_data, &sub_output_shape[0 * SHAPE_LEN], __real_auxi_mem_addr__);
     memset(__real_auxi_mem_addr__, 0, sub_auxi_mem_size[1]);
-    yolov8_custom_0_sub_1_Forward(dllp_conf_thresh_threshed_data, sub_output_shape[0 * SHAPE_LEN + 0], dllp_iou_thresh_threshed_data, &sub_output_shape[1 * SHAPE_LEN], __real_auxi_mem_addr__);
+    v8_custom_0_sub_1_Forward(dllp_conf_thresh_threshed_data, sub_output_shape[0 * SHAPE_LEN + 0], dllp_iou_thresh_threshed_data, &sub_output_shape[1 * SHAPE_LEN], __real_auxi_mem_addr__);
 
     for (int m = 0; m < SHAPE_LEN; m++)
     {

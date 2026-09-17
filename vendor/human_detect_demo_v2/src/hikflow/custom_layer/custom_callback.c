@@ -29,17 +29,17 @@ int Custom_Layer_GetModelMemsize(const char                 *hyperparams,
     int hr = 0;
     ALG_LOG_INFO("Custom_Layer_GetModelMemsize %s\n", ld->type);
     
-    if (0 == strcmp(ld->type, "yolov8_custom_0_sub_0"))
+    if (0 == strcmp(ld->type, "v8_custom_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_0_GetModelMemsize(hyperparams, param_blobs, ld, mem_tab);
+        hr = CUSTOM_V8_CUSTOM_0_GetModelMemsize(hyperparams, param_blobs, ld, mem_tab);
     }
-    else if (0 == strcmp(ld->type, "yolov8_custom_0"))
+    else if (0 == strcmp(ld->type, "v8_custom_0_sub_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_GetModelMemsize(hyperparams, param_blobs, ld, mem_tab);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_0_GetModelMemsize(hyperparams, param_blobs, ld, mem_tab);
     }
-    else if (0 == strcmp(ld->type, "yolov8_custom_0_sub_1"))
+    else if (0 == strcmp(ld->type, "v8_custom_0_sub_1"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_1_GetModelMemsize(hyperparams, param_blobs, ld, mem_tab);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_1_GetModelMemsize(hyperparams, param_blobs, ld, mem_tab);
     }
     else
     {
@@ -67,17 +67,17 @@ int Custom_Layer_CreateModel(const char                  *hyperparams,
     int hr = 0;
     ALG_LOG_INFO("Custom_Layer_CreateModel %s\n", ld->type);
 
-    if (0 == strcmp(ld->type, "yolov8_custom_0_sub_0"))
+    if (0 == strcmp(ld->type, "v8_custom_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_0_CreateModel(hyperparams, param_blobs, ld, mem_buf, handle);
+        hr = CUSTOM_V8_CUSTOM_0_CreateModel(hyperparams, param_blobs, ld, mem_buf, handle);
     }
-    else if (0 == strcmp(ld->type, "yolov8_custom_0"))
+    else if (0 == strcmp(ld->type, "v8_custom_0_sub_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_CreateModel(hyperparams, param_blobs, ld, mem_buf, handle);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_0_CreateModel(hyperparams, param_blobs, ld, mem_buf, handle);
     }
-    else if (0 == strcmp(ld->type, "yolov8_custom_0_sub_1"))
+    else if (0 == strcmp(ld->type, "v8_custom_0_sub_1"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_1_CreateModel(hyperparams, param_blobs, ld, mem_buf, handle);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_1_CreateModel(hyperparams, param_blobs, ld, mem_buf, handle);
     }
     else
     {
@@ -99,17 +99,17 @@ int Custom_Layer_GetMemsize(OPDEVSDK_HIKFLOW_LDATA_ST  *ld,
     int hr = 0;
     ALG_LOG_INFO("Custom_Layer_GetMemsize %s\n", ld->layer_model->type);
     
-    if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_0"))
+    if (0 == strcmp(ld->layer_model->type, "v8_custom_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_0_GetMemsize(ld, mem_tab);
+        hr = CUSTOM_V8_CUSTOM_0_GetMemsize(ld, mem_tab);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_GetMemsize(ld, mem_tab);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_0_GetMemsize(ld, mem_tab);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_1"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_1"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_1_GetMemsize(ld, mem_tab);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_1_GetMemsize(ld, mem_tab);
     }
     else
     {
@@ -133,17 +133,17 @@ int Custom_Layer_Create(OPDEVSDK_HIKFLOW_LDATA_ST  *ld,
     int hr = 0;
     ALG_LOG_INFO("Custom_Layer_Create %s\n", ld->layer_model->type);
 
-    if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_0"))
+    if (0 == strcmp(ld->layer_model->type, "v8_custom_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_0_Create(ld, mem_buf, handle);
+        hr = CUSTOM_V8_CUSTOM_0_Create(ld, mem_buf, handle);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_Create(ld, mem_buf, handle);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_0_Create(ld, mem_buf, handle);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_1"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_1"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_1_Create(ld, mem_buf, handle);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_1_Create(ld, mem_buf, handle);
     }
     else
     {
@@ -165,20 +165,20 @@ int Custom_Layer_Reshape(void                       *handle,
     int hr = 0;
     ALG_LOG_INFO("Custom_Layer_Reshape %s\n", ld->layer_model->type);
 
-    if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_0"))
+    if (0 == strcmp(ld->layer_model->type, "v8_custom_0"))
     {
         // compute the shape of the out blobs.
-		hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_0_reshape(handle, ld);
+		hr = CUSTOM_V8_CUSTOM_0_reshape(handle, ld);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_0"))
     {
         // compute the shape of the out blobs.
-		hr = CUSTOM_YOLOV8_CUSTOM_0_reshape(handle, ld);
+		hr = CUSTOM_V8_CUSTOM_0_SUB_0_reshape(handle, ld);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_1"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_1"))
     {
         // compute the shape of the out blobs.
-		hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_1_reshape(handle, ld);
+		hr = CUSTOM_V8_CUSTOM_0_SUB_1_reshape(handle, ld);
     }
     else
     {
@@ -200,17 +200,17 @@ int Custom_Layer_Forward(void                       *handle,
     int hr = 0;
     ALG_LOG_INFO("Custom_Layer_Forward %s\n", ld->layer_model->type);
     
-    if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_0"))
+    if (0 == strcmp(ld->layer_model->type, "v8_custom_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_0_Forward(handle, ld);
+        hr = CUSTOM_V8_CUSTOM_0_Forward(handle, ld);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_0"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_Forward(handle, ld);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_0_Forward(handle, ld);
     }
-    else if (0 == strcmp(ld->layer_model->type, "yolov8_custom_0_sub_1"))
+    else if (0 == strcmp(ld->layer_model->type, "v8_custom_0_sub_1"))
     {
-        hr = CUSTOM_YOLOV8_CUSTOM_0_SUB_1_Forward(handle, ld);
+        hr = CUSTOM_V8_CUSTOM_0_SUB_1_Forward(handle, ld);
     }
     else
     {

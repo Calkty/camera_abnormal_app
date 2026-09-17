@@ -17,6 +17,7 @@
 
 #include "hikflow_demo_priv.h"
 #include "event_bridge.h"
+#include "detect_overlay.h"
 #include "module_flags.h"
 #include <sys/time.h>
 
@@ -968,6 +969,56 @@ static void* hikflow_demo_get_attr_name(HIKFLOW_DEMO_CTRL* pCtrl,int index)
     return NULL;
 }
 
+#if CA_ENABLE_DETECT_OVERLAY
+/*!< publish the target list for the web overlay.
+ *
+ * Must run before hikflow_demo_proc_pos(), which zeroes res[0] after reading the
+ * attribute name; afterwards the class index of every target is gone. The box is
+ * taken from region.point[] exactly like hikflow_demo_proc_jpegenc() does, so the
+ * overlay matches the rectangles the device draws on its own preview. */
+static void hikflow_demo_publish_overlay(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_LIST_INFO_ST *pack_target,OPDEVSDK_VIDEO_FRAME_INFO_ST *frame,unsigned long long time_stamp)
+{
+    CaDetBox boxes[CA_DETECT_OVERLAY_MAX_BOXES];
+    int num = 0;
+    int i = 0;
+
+    HIKFLOW_NORET(NULL == pCtrl,HIKFLOW_DEMO_ERR_FAILED);
+    HIKFLOW_NORET(NULL == pack_target,HIKFLOW_DEMO_ERR_FAILED);
+    HIKFLOW_NORET(NULL == pack_target->tgtList.pTgt,HIKFLOW_DEMO_ERR_FAILED);
+
+    num = pack_target->tgtList.tgtNum;
+    if(num > CA_DETECT_OVERLAY_MAX_BOXES)
+    {
+        num = CA_DETECT_OVERLAY_MAX_BOXES;
+    }
+    if(num < 0)
+    {
+        num = 0;
+    }
+
+    memset(boxes,0,sizeof(boxes));
+    for(i = 0;i < num;i++)
+    {
+        OPDEVSDK_POS_TARGET_ST *tgt = &pack_target->tgtList.pTgt[i];
+        const char *attr_name = (const char *)hikflow_demo_get_attr_name(pCtrl,tgt->res[0]);
+
+        boxes[i].x = tgt->region.point[0].x;
+        boxes[i].y = tgt->region.point[0].y;
+        boxes[i].w = tgt->region.point[1].x - tgt->region.point[0].x;
+        boxes[i].h = tgt->region.point[3].y - tgt->region.point[0].y;
+        boxes[i].cls = tgt->res[0];
+        boxes[i].id = tgt->id;
+        if(attr_name != NULL)
+        {
+            /* precision bounded to the destination, so -Wformat-truncation stays quiet */
+            snprintf(boxes[i].name,CA_DETECT_OVERLAY_NAME_LEN,"%.*s",CA_DETECT_OVERLAY_NAME_LEN - 1,attr_name);
+        }
+    }
+
+    ca_detect_overlay_publish(boxes,num,frame->yuvFrame.width,frame->yuvFrame.height,(int64_t)(time_stamp / 1000));
+}
+#endif
+
 /*!< pack pos into stream,so you can see the target rects in web */
 static int hikflow_demo_proc_pos(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_LIST_INFO_ST *pack_target,unsigned long long time_stamp,OPDEVSDK_POS_TARGET_ST *alarm_target,OPDEVSDK_POS_RULE_ST *rule_info)
 {
@@ -1325,6 +1376,10 @@ static int hikflow_demo_alg_thread_from_cam(void *arg)
             pCtrl->net_suc_times++;
             OPDEVSDK_POS_TARGET_ST alarm_target = {0};
             OPDEVSDK_POS_RULE_ST rule_list= {0};
+#if CA_ENABLE_DETECT_OVERLAY
+            /*!< hand the target list to the web overlay before proc_pos clears res[0] */
+            hikflow_demo_publish_overlay(pCtrl,&pack_target,&cap_frame,net_frame.timeStamp);
+#endif
             /*!< third,pack pos into stream,so you can see the target rects in web */
             ret = hikflow_demo_proc_pos(pCtrl,&pack_target,net_frame.timeStamp,&alarm_target,&rule_list);
             HIKFLOW_ASSER(ret != HIKFLOW_DEMO_OK,ret);

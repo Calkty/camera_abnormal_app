@@ -1,15 +1,15 @@
 
 #include "dsl_runtime.h"
-#include "yolov8_custom_0_sub_1.h"
+#include "v8_custom_0_sub_1.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100, void * dllp_iou_thresh_threshed_data_1, void * dllp_iou_thresh_threshed_data_1_shape0, void* __auxi_mem_addr__, size_t __auxi_mem_size__)
+void v8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100, void * dllp_iou_thresh_threshed_data_1, void * dllp_iou_thresh_threshed_data_1_shape0, void* __auxi_mem_addr__, size_t __auxi_mem_size__)
 {
     DSL_MemBuf mem_buf;
     dsl_membuf_init(&mem_buf, __auxi_mem_addr__,__auxi_mem_size__);
-    int32_t cse_var_6 = (x_100) * (80);
+    int32_t cse_var_6 = (x_100) * (6);
     int32_t cse_var_5 = (x_100) * (512);
     int32_t cse_var_4 = (x_100) * (4);
     int32_t cse_var_3 = (x_100) * (2);
@@ -35,7 +35,7 @@ void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100,
     }
     ((int32_t*)__tmp_79)[0] = 2;
     ((int32_t*)__tmp_79)[1] = 2;
-    ((int32_t*)__tmp_79)[2] = 80;
+    ((int32_t*)__tmp_79)[2] = 6;
     ((int32_t*)__tmp_79)[3] = 1;
     float* __tmp_80 = dsl_membuf_alloc(&mem_buf, "__tmp_80", sizeof(float) * (1));
     ((float*)__tmp_80)[0] = 0.0f;
@@ -52,7 +52,7 @@ void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100,
     float* dllp_iou_thresh_half_wh = dsl_membuf_alloc(&mem_buf, "dllp_iou_thresh_half_wh", sizeof(float) * (cse_var_3));
     for (int32_t i_1 = 0; i_1 < x_100; i_1 += 1)
     {
-        int32_t __licm_ = (i_1) * (85);
+        int32_t __licm_ = (i_1) * (11);
         int32_t __licm__1 = (i_1) * (2);
         for (int32_t j = 0; j < 2; j += 1)
         {
@@ -63,7 +63,7 @@ void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100,
     for (int32_t i_2 = 0; i_2 < x_100; i_2 += 1)
     {
         int32_t __licm__2 = (i_2) * (2);
-        int32_t __licm__3 = (i_2) * (85);
+        int32_t __licm__3 = (i_2) * (11);
         for (int32_t j_1 = 0; j_1 < 2; j_1 += 1)
         {
             int32_t cse_var_7 = (__licm__2) + (j_1);
@@ -73,7 +73,7 @@ void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100,
     for (int32_t i_3 = 0; i_3 < x_100; i_3 += 1)
     {
         int32_t __licm__4 = (i_3) * (2);
-        int32_t __licm__5 = (i_3) * (85);
+        int32_t __licm__5 = (i_3) * (11);
         for (int32_t j_2 = 0; j_2 < 2; j_2 += 1)
         {
             int32_t cse_var_8 = (__licm__4) + (j_2);
@@ -101,35 +101,35 @@ void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100,
     float* dllp_iou_thresh_box = dsl_membuf_alloc(&mem_buf, "dllp_iou_thresh_box", sizeof(float) * ((x_100) * (5)));
     for (int32_t i_7 = 0; i_7 < x_100; i_7 += 1)
     {
-        int32_t cse_var_15 = (i_7) * (85);
-        int32_t cse_var_14 = (i_7) * (5);
+        int32_t cse_var_15 = (i_7) * (5);
+        int32_t cse_var_14 = (i_7) * (11);
         int32_t __licm__10 = (i_7) * (2);
-        int32_t __licm__11 = cse_var_14;
+        int32_t __licm__11 = cse_var_15;
         for (int32_t i_8 = 0; i_8 < 2; i_8 += 1)
         {
             ((float*)dllp_iou_thresh_box)[(__licm__11) + (i_8)] = ((float*)dllp_iou_thresh_half_wh)[(__licm__10) + (i_8)];
         }
-        int32_t __licm__12 = cse_var_15;
-        int32_t __licm__13 = cse_var_14;
+        int32_t __licm__12 = cse_var_14;
+        int32_t __licm__13 = cse_var_15;
         for (int32_t i_9 = 0; i_9 < 2; i_9 += 1)
         {
             ((float*)dllp_iou_thresh_box)[((__licm__13) + (i_9)) + (2)] = ((float*)dllp_conf_thresh_threshed_data)[((__licm__12) + (i_9)) + (2)];
         }
-        ((float*)dllp_iou_thresh_box)[(cse_var_14) + (4)] = ((float*)dllp_conf_thresh_threshed_data)[(cse_var_15) + (84)];
+        ((float*)dllp_iou_thresh_box)[(cse_var_15) + (4)] = ((float*)dllp_conf_thresh_threshed_data)[(cse_var_14) + (10)];
     }
     float* dllp_iou_thresh_obj_cls_dim3 = dsl_membuf_alloc(&mem_buf, "dllp_iou_thresh_obj_cls_dim3", sizeof(float) * (cse_var_6));
-    for (int32_t j_3 = 0; j_3 < 80; j_3 += 1)
+    for (int32_t j_3 = 0; j_3 < 6; j_3 += 1)
     {
         int32_t __licm__14 = (j_3) * (x_100);
         for (int32_t k = 0; k < x_100; k += 1)
         {
-            ((float*)dllp_iou_thresh_obj_cls_dim3)[(k) + (__licm__14)] = ((float*)dllp_conf_thresh_threshed_data)[(((k) * (85)) + (j_3)) + (4)];
+            ((float*)dllp_iou_thresh_obj_cls_dim3)[(k) + (__licm__14)] = ((float*)dllp_conf_thresh_threshed_data)[(((k) * (11)) + (j_3)) + (4)];
         }
     }
     float* __tmp_54 = dsl_membuf_alloc(&mem_buf, "__tmp_54", sizeof(float) * (cse_var_1));
     int32_t* dllp_iou_thresh_index_shape = dsl_membuf_alloc(&mem_buf, "dllp_iou_thresh_index_shape", sizeof(int32_t) * (2));
     int8_t* _tmp_buf = dsl_membuf_alloc(&mem_buf, "_tmp_buf", sizeof(int8_t) * (cse_var_5));
-    nms_forward((float*)dllp_iou_thresh_xyxy, 1, x_100, 4, (float*)dllp_iou_thresh_obj_cls_dim3, 1, 80, x_100, (void*)__tmp_54, (void*)dllp_iou_thresh_index_shape, 1000, 0.5f, 0.5f, (void*)_tmp_buf);
+    nms_forward((float*)dllp_iou_thresh_xyxy, 1, x_100, 4, (float*)dllp_iou_thresh_obj_cls_dim3, 1, 6, x_100, (void*)__tmp_54, (void*)dllp_iou_thresh_index_shape, 1000, 0.5f, 0.5f, (void*)_tmp_buf);
     dsl_membuf_free(&mem_buf, _tmp_buf, sizeof(int8_t) * (cse_var_5));
     __tmp_57 = ((int32_t*)dllp_iou_thresh_index_shape)[0];
     int32_t* dllp_iou_thresh_index_1 = dsl_membuf_alloc(&mem_buf, "dllp_iou_thresh_index_1", sizeof(int32_t) * (cse_var_1));
@@ -170,7 +170,7 @@ void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100,
     for (int32_t i_15 = 0; i_15 < __tmp_57; i_15 += 1)
     {
         int32_t cse_var_10 = (i_15) * (3);
-        ((float*)dllp_iou_thresh_score)[i_15] = ((float*)dllp_conf_thresh_threshed_data)[((((((int32_t*)dllp_iou_thresh_index_1)[(cse_var_10) + (2)]) * (85)) + (((int32_t*)dllp_iou_thresh_index_1)[(cse_var_10) + (1)])) + (((((int32_t*)dllp_iou_thresh_index_1)[cse_var_10]) * (80)) * (x_100))) + (4)];
+        ((float*)dllp_iou_thresh_score)[i_15] = ((float*)dllp_conf_thresh_threshed_data)[((((((int32_t*)dllp_iou_thresh_index_1)[(cse_var_10) + (2)]) * (11)) + (((int32_t*)dllp_iou_thresh_index_1)[(cse_var_10) + (1)])) + (((((int32_t*)dllp_iou_thresh_index_1)[cse_var_10]) * (6)) * (x_100))) + (4)];
     }
     for (int32_t i_16 = 0; i_16 < __tmp_57; i_16 += 1)
     {
@@ -207,7 +207,7 @@ void yolov8_custom_0_sub_1(void * dllp_conf_thresh_threshed_data, int32_t x_100,
     dsl_membuf_free(&mem_buf, __tmp_75, sizeof(int32_t) * (1));
 }
 
-DSL_DLL int yolov8_custom_0_sub_1_Forward(float* dllp_conf_thresh_threshed_data, int32_t x_100, float* dllp_iou_thresh_threshed_data_1, int32_t * dllp_iou_thresh_threshed_data_2_shape, void* __auxi_mem_addr__)
+DSL_DLL int v8_custom_0_sub_1_Forward(float* dllp_conf_thresh_threshed_data, int32_t x_100, float* dllp_iou_thresh_threshed_data_1, int32_t * dllp_iou_thresh_threshed_data_2_shape, void* __auxi_mem_addr__)
 {
     
     // define internal function return symbols
@@ -216,11 +216,11 @@ DSL_DLL int yolov8_custom_0_sub_1_Forward(float* dllp_conf_thresh_threshed_data,
     int32_t auxi_memsize = 0;
     int32_t dllp_iou_thresh_threshed_data_2_maxshape[5];  // max 5 dim
     
-    yolov8_custom_0_sub_1_Reshape(x_100, dllp_iou_thresh_threshed_data_2_maxshape, &auxi_memsize);
+    v8_custom_0_sub_1_Reshape(x_100, dllp_iou_thresh_threshed_data_2_maxshape, &auxi_memsize);
 
     
     // Invoke Entry Function
-    yolov8_custom_0_sub_1(dllp_conf_thresh_threshed_data, x_100, dllp_iou_thresh_threshed_data_1, &dllp_iou_thresh_threshed_data_1_shape0, __auxi_mem_addr__, auxi_memsize);
+    v8_custom_0_sub_1(dllp_conf_thresh_threshed_data, x_100, dllp_iou_thresh_threshed_data_1, &dllp_iou_thresh_threshed_data_1_shape0, __auxi_mem_addr__, auxi_memsize);
     
     
     // Set Output Tensor Shapes

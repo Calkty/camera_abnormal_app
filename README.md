@@ -8,6 +8,8 @@ This project is the first integrated implementation for the ball-camera abnormal
 4. `event_clip_thread` copies pre-event packets immediately, waits for post-event packets, key-frame aligns the output, injects SPS/PPS/VPS, and writes `.h264` or `.h265`.
 5. `upload_thread` uploads metadata and video through HTTP multipart/form-data with retry and 2xx confirmation.
 6. The external server receives the raw stream and converts it to MP4 with `ffmpeg`.
+7. `html/index.html` polls the app's `cameraAbnormal/detections` ISAPI endpoint and draws the inference boxes over the live video, so the page shows the detections and not just the camera picture. See `DETECT_OVERLAY.md`.
+8. The bundled detection model is a personal 6-class model. It is coupled to the generated custom layers, so both must be swapped together; see `MODEL_SWAP.md` for the provenance, the coupling rule, and the class-name table that still needs filling in.
 
 ## Build On HEOP Container
 

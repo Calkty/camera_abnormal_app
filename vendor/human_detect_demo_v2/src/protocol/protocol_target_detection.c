@@ -1,6 +1,7 @@
 #include <cgi_page.h>
 #include <string.h>
 #include <cJSON.h>
+#include <detect_overlay.h>
 #include <protocol_target_detection_do.h>
 #include <protocol_target_detection.h>
 #include <protocol_status.h>
@@ -50,7 +51,7 @@ static int get_target_detect_capa_json(cJSON *root)
     cJSON_AddBoolToObject(js_targetDetectLinkageCap, "isSupportCenter", 1);
     cJSON_AddBoolToObject(js_targetDetectLinkageCap, "isSupportStorage", 1);
     cJSON_AddBoolToObject(js_targetDetectLinkageCap, "isSupportRecord", 1);
-    /*ÔÝÊ±²»Ö§³Ö×¥ÅÄ*/
+    /*ï¿½ï¿½Ê±ï¿½ï¿½Ö§ï¿½ï¿½×¥ï¿½ï¿½*/
     cJSON_AddBoolToObject(js_targetDetectLinkageCap, "isSupportCapture", 0);
 
 
@@ -335,7 +336,7 @@ static int put_target_detect_cfg_json(cJSON *root, APP_CFG *p_target_detect_cfg)
             }          
         }
     }
-    //TODO:ÔÝÊ±Ð´ËÀ£¬´ýÐ­ÒéÉÌ¶¨³ö±ê×¼µÄÔÙ¸³Öµ
+    //TODO:ï¿½ï¿½Ê±Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½Ù¸ï¿½Öµ
     p_target_detect_cfg->osd_enable = 0;
     p_target_detect_cfg->streamWithVca = 0;
     p_target_detect_cfg->threshold = 100;
@@ -467,4 +468,67 @@ int isapi_target_detect_ext_V2(node_t *dstnode, WEB_DES *webinfo, char *remain_p
         return PRO_MATHOD_NOT_ALLOWED;
     }
     return PRO_OK;
+}
+
+/*!< The web overlay polls this endpoint, so the payload is deliberately small:
+     boxes are capped by CA_DETECT_OVERLAY_MAX_BOXES and the snapshot is already
+     clamped, which keeps httpbody within the response buffer the platform owns. */
+static int get_target_detect_detection_json(cJSON *root)
+{
+    CaDetSnapshot snap;
+    cJSON *js_det = NULL;
+    cJSON *js_boxes = NULL;
+    int i = 0;
+
+    if (NULL == root)
+    {
+        opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "get_target_detect_detection_json param is NULL\n");
+        return PRO_DEV_ERR;
+    }
+
+    ca_detect_overlay_get(&snap);
+
+    cJSON_AddItemToObject(root, "cameraAbnormalDetections", js_det = cJSON_CreateObject());
+    cJSON_AddNumberToObject(js_det, "seq", (double)snap.seq);
+    cJSON_AddNumberToObject(js_det, "ts", (double)snap.ts_ms);
+    cJSON_AddNumberToObject(js_det, "frameW", (double)snap.frame_w);
+    cJSON_AddNumberToObject(js_det, "frameH", (double)snap.frame_h);
+    cJSON_AddNumberToObject(js_det, "count", (double)snap.count);
+
+    js_boxes = cJSON_AddArrayToObject(js_det, "boxes");
+    for (i = 0; i < snap.count; i++)
+    {
+        cJSON *js_box = cJSON_CreateObject();
+        cJSON_AddItemToArray(js_boxes, js_box);
+        cJSON_AddNumberToObject(js_box, "x", (double)snap.boxes[i].x);
+        cJSON_AddNumberToObject(js_box, "y", (double)snap.boxes[i].y);
+        cJSON_AddNumberToObject(js_box, "w", (double)snap.boxes[i].w);
+        cJSON_AddNumberToObject(js_box, "h", (double)snap.boxes[i].h);
+        cJSON_AddNumberToObject(js_box, "cls", (double)snap.boxes[i].cls);
+        cJSON_AddNumberToObject(js_box, "id", (double)snap.boxes[i].id);
+        cJSON_AddStringToObject(js_box, "name", snap.boxes[i].name);
+    }
+
+    return PRO_OK;
+}
+
+int isapi_target_detect_detections(node_t *dstnode, WEB_DES *webinfo, char *remain_path, CGI_PAGE *page)
+{
+    OP_DEVSDK_REQ_DES *req = NULL;
+
+    if (NULL == webinfo || NULL == page || NULL == remain_path)
+    {
+        opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "isapi_target_detect_detections null param\n");
+        return PRO_DEV_ERR;
+    }
+
+    req = webinfo->req;
+
+    if (GET != req->method)
+    {
+        opdevsdk_write_log(OPDEVSDK_LOG_ERROR, "method not allowed\n");
+        return PRO_MATHOD_NOT_ALLOWED;
+    }
+
+    return get_target_detect_detection_json(page->json_root);
 }

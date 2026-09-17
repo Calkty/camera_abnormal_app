@@ -31,6 +31,9 @@ $(function () {
   var LIVE = '/ISAPI/streaming/channels/102';
   //Video Plugin
   var Plugin = null;
+  //Currently selected channel. Declared here because the detection overlay
+  //starts polling before the channel list has been fetched.
+  let currentChannel = -1;
   //login session info
   // var SESSION = window.parent.getUserSession();
   //user info, security upgrade. it's no safe in stream URL, replace by session type;
@@ -85,6 +88,17 @@ $(function () {
   }, 500);
   var rectCanvas = RectCanvas("liveviewCanvas");
   rectCanvas.initRectCanvas(600, 450);
+
+  // detection boxes: separate layer, polled independently of the video player
+  var detectOverlay = DetectOverlay("detectCanvas");
+  detectOverlay.setEnabled($("#showDetectBox").is(":checked"));
+  $("#showDetectBox").on("change", function () {
+    detectOverlay.setEnabled(this.checked);
+  });
+  $(window).on("beforeunload", function () {
+    detectOverlay.stop();
+  });
+  detectOverlay.start();
 
   // io data: {id: '1', alarmName: 'A->1'}
   const aIOOutList = [];
@@ -226,7 +240,6 @@ $(function () {
     getParamCap(channel);
   }
 
-  let currentChannel = -1;
   /** get capabilities from device */
   function getParamCap(channel) {
     let curURL = '/ISAPI/Custom/OpenPlatform/extern/cameraAbnormal/capabilities?format=json';
@@ -290,6 +303,8 @@ $(function () {
   /** get param from device */
   async function getParam(channel) {
     clearRect();
+    // drop the previous channel's boxes, polling continues
+    detectOverlay.reset();
     if (Plugin) {
       getToken();
       await Plugin.JS_Stop(0);
@@ -838,6 +853,199 @@ $(function () {
     return that;
   }
 
+  /**
+   * Detection box overlay.
+   *
+   * The application publishes the latest inference result on an ISAPI endpoint.
+   * This polls that endpoint and draws the boxes on the canvas stacked between
+   * the video and the rule-editing canvas, so the polygon editor keeps working.
+   * Polling is asynchronous and self-pacing: the next request is scheduled only
+   * after the previous one settles, so a slow device cannot build a backlog.
+   */
+  function DetectOverlay(id) {
+    /* Factory, like RectCanvas: the instance is returned explicitly so callers
+       do not depend on `new` or on `this` being the instance. */
+    var that = {};
+
+    that.POLL_MS = 250;
+    that.STALE_MS = 2000;
+
+    var canvasElement = $("#" + id)[0];
+    that.canvasElement = canvasElement;
+    that.context2D = canvasElement ? canvasElement.getContext("2d") : null;
+    that.width = canvasElement ? canvasElement.width : 0;
+    that.height = canvasElement ? canvasElement.height : 0;
+
+    var timer = null;
+    var inFlight = false;
+    var running = false;
+    var enabled = true;
+    var lastSeq = -1;
+    var lastOkMs = 0;
+    var failures = 0;
+    var boxes = [];
+
+    function clearCanvas() {
+      if (that.context2D) {
+        that.context2D.clearRect(0, 0, that.width, that.height);
+      }
+    }
+
+    function render() {
+      var i = 0;
+
+      if (!that.context2D) {
+        return;
+      }
+      clearCanvas();
+      if (!enabled) {
+        return;
+      }
+
+      for (i = 0; i < boxes.length; i++) {
+        var box = boxes[i];
+        var x = box.x * that.width;
+        var y = box.y * that.height;
+        var w = box.w * that.width;
+        var h = box.h * that.height;
+        if (!(w > 0) || !(h > 0)) {
+          continue;
+        }
+
+        that.context2D.strokeStyle = "#00FF00";
+        that.context2D.lineWidth = 2;
+        that.context2D.strokeRect(x, y, w, h);
+
+        var szLabel = box.name ? box.name + " id:" + box.id : "id:" + box.id;
+        that.context2D.font = "14px sans-serif";
+        var iBaseline = y >= 18 ? y - 4 : y + 16;
+        var iTextW = that.context2D.measureText(szLabel).width + 4;
+        that.context2D.fillStyle = "rgba(0, 0, 0, 0.5)";
+        that.context2D.fillRect(x, iBaseline - 13, iTextW, 15);
+        that.context2D.fillStyle = "#00FF00";
+        that.context2D.fillText(szLabel, x + 2, iBaseline);
+      }
+    }
+
+    function takeResult(oJson) {
+      lastOkMs = new Date().getTime();
+      failures = 0;
+
+      var data = oJson && oJson.cameraAbnormalDetections;
+      /* seq 0 means the device has not published a detection yet. */
+      if (!data || data.seq === undefined || data.seq === 0) {
+        if (boxes.length) {
+          boxes = [];
+          render();
+        }
+        return;
+      }
+      if (data.seq === lastSeq) {
+        return; /* no new result, keep the current drawing */
+      }
+      lastSeq = data.seq;
+      boxes = data.boxes && data.boxes.length ? data.boxes : [];
+      render();
+    }
+
+    function hideStaleBoxes() {
+      if (boxes.length && new Date().getTime() - lastOkMs > that.STALE_MS) {
+        boxes = [];
+        render();
+      }
+    }
+
+    function schedule() {
+      if (running) {
+        timer = window.setTimeout(poll, that.POLL_MS);
+      }
+    }
+
+    function poll() {
+      timer = null;
+      if (!running) {
+        return;
+      }
+      hideStaleBoxes();
+      if (!enabled || inFlight) {
+        schedule();
+        return;
+      }
+
+      var szUrl = "/ISAPI/Custom/OpenPlatform/extern/cameraAbnormal/detections?format=json";
+      if (currentChannel > 0) {
+        szUrl += "&chanID=" + currentChannel;
+      }
+
+      inFlight = true;
+      $.ajax({
+        url: HTTP + HOST + ":" + PORT + szUrl,
+        type: "GET",
+        dataType: "json",
+        cache: false,
+        success: function (oJson) {
+          takeResult(oJson);
+        },
+        error: function () {
+          /* Stay silent: a dialog per failed poll would be unusable, and the
+             stale timeout already removes the boxes. */
+          failures++;
+          if (failures === 3) {
+            console.warn("detect overlay: detection endpoint unavailable");
+          }
+          if (failures >= 3 && boxes.length) {
+            boxes = [];
+            render();
+          }
+        },
+        complete: function () {
+          inFlight = false;
+          schedule();
+        }
+      });
+    }
+
+    /* Idempotent: initLiveView runs again on every channel switch. */
+    that.start = function () {
+      if (running) {
+        return;
+      }
+      running = true;
+      lastSeq = -1;
+      lastOkMs = new Date().getTime();
+      poll();
+    };
+
+    that.stop = function () {
+      running = false;
+      if (timer) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
+      boxes = [];
+      lastSeq = -1;
+      clearCanvas();
+    };
+
+    /* Drop the current drawing but keep polling: used on channel switch. */
+    that.reset = function () {
+      boxes = [];
+      lastSeq = -1;
+      clearCanvas();
+    };
+
+    that.setEnabled = function (bEnable) {
+      enabled = !!bEnable;
+      render();
+    };
+
+    that.isEnabled = function () {
+      return enabled;
+    };
+
+    return that;
+  }
+
   //demo interface for browser window environment
   var demoInterface = {};
 
@@ -1006,5 +1214,8 @@ $(function () {
   demoInterface.draw = draw;
   demoInterface.clearRect = clearRect;
   demoInterface.setParam = setParam;
+  demoInterface.toggleDetect = function (bEnable) {
+    detectOverlay.setEnabled(bEnable);
+  };
   window.demoInterface = demoInterface;
 });

@@ -2,7 +2,7 @@ CC ?= aarch64-mix210-linux-gcc
 .DEFAULT_GOAL := all
 
 # Unspecified switches use src/module_flags.h defaults.
-MODULE_NAMES = INFER RING CLIP UPLOAD LEGACY_ALARM
+MODULE_NAMES = INFER RING CLIP UPLOAD LEGACY_ALARM DETECT_OVERLAY
 MODULE_DEFS = $(foreach m,$(MODULE_NAMES),$(if $(filter undefined,$(origin ENABLE_$(m))),,-DCA_ENABLE_$(m)=$(ENABLE_$(m))))
 
 PLATFORM ?= H9
@@ -58,6 +58,7 @@ SRCS = \
 	src/rtsp_client.c \
 	src/clip_writer.c \
 	src/uploader.c \
+	src/detect_overlay.c \
 	src/infer_adapter.c
 
 HUMAN_SRCS = \
@@ -71,16 +72,16 @@ HUMAN_SRCS = \
 	$(HUMAN_DIR)/src/hikflow/code/json_proc.c \
 	$(HUMAN_DIR)/src/hikflow/code/stack_mng_priv.c \
 	$(HUMAN_DIR)/src/hikflow/custom_layer/custom_callback.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/custom_yolov8_custom_0_layer.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/custom_yolov8_custom_0_sub_0_layer.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/custom_yolov8_custom_0_sub_1_layer.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/custom_v8_custom_0_layer.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/custom_v8_custom_0_sub_0_layer.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/custom_v8_custom_0_sub_1_layer.c \
 	$(HUMAN_DIR)/src/hikflow/custom_layer/opc_runtime_arm.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/yolov8_custom_0_forward.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/yolov8_custom_0_reshape.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/yolov8_custom_0_sub_0_forward.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/yolov8_custom_0_sub_0_reshape.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/yolov8_custom_0_sub_1_forward.c \
-	$(HUMAN_DIR)/src/hikflow/custom_layer/yolov8_custom_0_sub_1_reshape.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/v8_custom_0_forward.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/v8_custom_0_reshape.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/v8_custom_0_sub_0_forward.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/v8_custom_0_sub_0_reshape.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/v8_custom_0_sub_1_forward.c \
+	$(HUMAN_DIR)/src/hikflow/custom_layer/v8_custom_0_sub_1_reshape.c \
 	$(HUMAN_DIR)/src/protocol/protocol_cb.c \
 	$(HUMAN_DIR)/src/protocol/protocol_target_detect_tree.c \
 	$(HUMAN_DIR)/src/protocol/protocol_target_detection.c \

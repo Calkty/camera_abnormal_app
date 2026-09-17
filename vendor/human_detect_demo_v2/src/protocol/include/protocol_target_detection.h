@@ -15,9 +15,9 @@
 
 typedef struct
 {
-	OP_DEVSDK_REQ_DES *req;         /*ÇëÇóÐÅÏ¢*/
-	OP_DEVSDK_RESP_DES *resp;       /*Ó¦´ðÐÅÏ¢*/
-	int sockfd;              /*Í¸´«isapi×¨ÓÃ*/
+	OP_DEVSDK_REQ_DES *req;         /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢*/
+	OP_DEVSDK_RESP_DES *resp;       /*Ó¦ï¿½ï¿½ï¿½ï¿½Ï¢*/
+	int sockfd;              /*Í¸ï¿½ï¿½isapi×¨ï¿½ï¿½*/
 }WEB_DES;
 
 typedef struct tag_node_t
@@ -27,12 +27,13 @@ typedef struct tag_node_t
     struct tag_node_t  *prenode;
     struct tag_node_t   *nextnode;
     int           bservice;   /*service -1; source - 0*/
-    int           method;     /*´Ë½ÚµãÖ§³ÖµÄhttp ·½·¨get put....*/
-	int			  format;	  /* FORMAT_XML | FORMAT_JSON,±ØÌî */
+    int           method;     /*ï¿½Ë½Úµï¿½Ö§ï¿½Öµï¿½http ï¿½ï¿½ï¿½ï¿½get put....*/
+	int			  format;	  /* FORMAT_XML | FORMAT_JSON,ï¿½ï¿½ï¿½ï¿½ */
 }node_t;
 
 int isapi_target_detect_ext(node_t *dstnode, WEB_DES *webinfo, char *remain_path, CGI_PAGE *page);
 int isapi_target_detect_ext_V2(node_t *dstnode, WEB_DES *webinfo, char *remain_path, CGI_PAGE *page, int chan);
 int isapi_target_detect_capabilities(node_t *dstnode, WEB_DES *webinfo, char *remain_path, CGI_PAGE *page);
+int isapi_target_detect_detections(node_t *dstnode, WEB_DES *webinfo, char *remain_path, CGI_PAGE *page);
 
 
