@@ -7,3 +7,12 @@ APP/*.app
 # Local unit test binaries (built by hand with the host compiler, see tests/)
 tests/*.exe
 tests/*.o
+
+# Python is only used for local helpers and scratch scripts, not the app
+# itself. Note this only hides *untracked* files: check_model_bin.py and
+# server/server.py were committed before this rule and stay tracked, so they
+# keep showing up in git status. Run `git rm --cached <file>` to drop them.
+*.py
+*.pyc
+__pycache__/
+server/.venv/
