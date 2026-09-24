@@ -5,7 +5,7 @@
 #include <unistd.h>
 
 #define CLEAR_WORK_DIR "/heop/package/cameraAbnormal/user_data/camera_abnormal"
-#define CLEAR_MARKER ".events_clear_once_v1.done"
+#define CLEAR_MARKER ".events_clear_once_20260921.done"
 
 static int event_suffix(const char *name)
 {

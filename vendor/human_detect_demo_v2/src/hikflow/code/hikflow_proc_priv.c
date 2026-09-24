@@ -11,12 +11,21 @@
 * @note         add fuctions for hikflow
 *****************************************************************************/
 #include <syslog.h>
+#include <math.h>
 #include "hikflow_demo_priv.h"
 #include "opdevsdk_hka_types.h"
 #include "custom_callback.h"
 #include "opdevsdk_hikflow_custom.h"
 
 #define HIKFLOW_PROC_DBG(arg...)                 isfw_log_print("[HF_proc]",ISFW_LOG_LEVEL_DEBUG, __FILE__,__LINE__,##arg)
+
+static float g_confidence_threshold = 0.0f;
+
+/* Set once before starting the inference workers. */
+void hikflow_proc_set_confidence_threshold(float threshold)
+{
+    g_confidence_threshold = threshold;
+}
 
 static int hikflow_proc_is_abnormal_class(HIKFLOW_DEMO_CTRL *pCtrl, int class_type)
 {
@@ -635,8 +644,10 @@ int hikflow_proc_init(HIKFLOW_DEMO_CTRL* pCtrl)
 * 
 * @return           0 if successful, otherwise an error number returned
 */
-int hikflow_proc_alg_from_cam(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_VIDEO_FRAME_INFO_ST *pfrm,OPDEVSDK_POS_TARGET_LIST_INFO_ST *ptarget)
+int hikflow_proc_alg_from_cam(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_VIDEO_FRAME_INFO_ST *pfrm,OPDEVSDK_POS_TARGET_LIST_INFO_ST *ptarget, float *alarm_confidence)
 {
+    HIKFLOW_RET(NULL == alarm_confidence,HIKFLOW_DEMO_ERR_NULL_PTR);
+    *alarm_confidence = 0.0f;
     HIKFLOW_RET(NULL == pfrm,HIKFLOW_DEMO_ERR_NULL_PTR);
     HIKFLOW_RET(NULL == ptarget,HIKFLOW_DEMO_ERR_NULL_PTR);
     HIKFLOW_RET(NULL == pCtrl,HIKFLOW_DEMO_ERR_NULL_PTR);
@@ -673,6 +684,10 @@ int hikflow_proc_alg_from_cam(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_VIDEO_FRAME_INFO
 		in_rule = 0;
         box_info = (HIKFLOW_DEMO_BOX_INFO_ST*)hkann_out.output_blob[0].data;
         box_info = box_info + n;
+        if (!isfinite(box_info->score) || box_info->score < g_confidence_threshold)
+        {
+            continue;
+        }
         HIKFLOW_DBG("current bounding box: %d\n", n);
         HIKFLOW_DBG("classs = %f\n", box_info->class_type);
         HIKFLOW_DBG("score  = %f\n", box_info->score);
@@ -735,6 +750,11 @@ int hikflow_proc_alg_from_cam(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_VIDEO_FRAME_INFO
 			/*!< save the information of targets within the current rule area */
  			if(in_rule == 1)
 			{
+                pCtrl->target_scores[idx] = box_info->score;
+                /* proc_pos selects the first accepted target for the alarm. */
+                if (idx == 0) {
+                    *alarm_confidence = box_info->score;
+                }
 	            ptarget->tgtList.pTgt[idx].region.pointNum = 4;
 	            ptarget->tgtList.pTgt[idx].id = idx+1;
 	            ptarget->tgtList.pTgt[idx].trace_time = 0;

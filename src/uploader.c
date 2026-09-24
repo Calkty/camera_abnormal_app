@@ -1,5 +1,6 @@
 #include "uploader.h"
 #include "event_files.h"
+#include "failed_archive.h"
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -301,7 +302,11 @@ void *upload_thread(void *arg)
             ca_sleep_ms(ctx->cfg->upload_retry_interval_ms);
         }
         ca_log(ok ? "INFO" : "ERR", "%s upload: %s", ok ? "confirmed" : "failed", job.video_path);
-        event_files_after_upload(ok, ctx->cfg->delete_after_upload, job.video_path, job.meta_path);
+        if (ok) {
+            event_files_after_upload(1, ctx->cfg->delete_after_upload, job.video_path, job.meta_path);
+        } else {
+            failed_archive_and_remove(job.video_path, job.meta_path);
+        }
     }
     return NULL;
 }

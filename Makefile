@@ -106,6 +106,8 @@ FORCE:
 $(OBJS) $(HUMAN_OBJS): src/module_flags.h .module-flags
 $(OBJS): src/config.h src/event_files.h
 $(OBJS): src/startup_cleanup.h
+$(OBJS): src/failed_archive.h src/detect_overlay.h
+$(HUMAN_OBJS): $(HUMAN_DIR)/src/hikflow/code/hikflow_demo_priv.h src/detect_overlay.h
 
 src/%.o: src/%.c
 	$(CC) $(MODULE_DEFS) $(CORE_CFLAGS) $(CORE_INC) -c $< -o $@

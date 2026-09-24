@@ -24,6 +24,7 @@ typedef struct {
     float w; /*!< normalized width, range [0,1] */
     float h; /*!< normalized height, range [0,1] */
     int cls; /*!< model class index */
+    float confidence; /*!< raw score of this target, not an event-wide score */
     int id;  /*!< target id reported by the demo */
     char name[CA_DETECT_OVERLAY_NAME_LEN]; /*!< class name, always NUL terminated */
 } CaDetBox;

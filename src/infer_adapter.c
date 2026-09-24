@@ -7,6 +7,7 @@
 #include <pthread.h>
 
 int audio_play_init(void);
+void hikflow_proc_set_confidence_threshold(float threshold);
 void alarm_set_http_target(const char *ip, int port);
 void alarm_server_task(void);
 void *alarm_process(void *arg);
@@ -84,6 +85,8 @@ static int start_human_detect_demo(const AppConfig *cfg, EventQueue *queue)
     }
 
     g_human_event_queue = queue;
+    hikflow_proc_set_confidence_threshold(cfg->confidence_threshold);
+    ca_log("INFO", "detection confidence_threshold=%.3f", cfg->confidence_threshold);
     alarm_set_http_target(cfg->human_alarm_ip, cfg->human_alarm_port);
     hikflow_demo_set_infer_interval_ms(cfg->infer_interval_seconds * 1000);
     hikflow_demo_set_runtime_options(cfg->hikflow_model_path, cfg->abnormal_classes);

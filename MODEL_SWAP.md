@@ -445,7 +445,8 @@ logread | grep detectnum
 **通过判据**：
 1. 气球/塑料袋在画面里 → 出现绿框，**位置与目标重合**
 2. **四角对齐测试**：目标移到画面左/右/上/下边缘，框不偏移、不镜像
-3. 标签显示**真实类别名**（`balloon id:1`），不是 `person`、也不是 `class1`
+3. 标签显示**真实类别名 + 模型类别号 + 该目标自己的置信度**
+   （`balloon class:1 confidence:0.82`），不是 `person`、也不是只显示 `id:1`
 4. 至少验证 **2 个不同类别**，标签各自正确
 5. 取消勾选 → 框立即消失，规则多边形仍可正常拖拽/保存
 6. 切换通道 → 旧框消失，新框随检测出现
@@ -453,6 +454,8 @@ logread | grep detectnum
 **失败→原因**：
 - 标签仍显示 `person` 等旧名 → `APP/hikflow_attr.json` 没生效（它是按 `model_path` 的
   名字匹配 `"name":"Model_P_NPU0.bin"` 的），或只改了 vendor 那份没同步 APP
+- 画面上出现**两套**框或两套文字 → 一套是设备自己烧进码流的（`hikflow_demo_proc_pos()`），
+  一套是网页 canvas 的。两者文字现已对齐，见 `DETECT_OVERLAY.md`「画面上有两层框」
 - 框有系统性偏移 → 检查是否有人改过 `SuperRender_10.js` 的渲染/裁剪
 
 ### S5 告警链路回归（`sel_class=-1` 带来的新风险）

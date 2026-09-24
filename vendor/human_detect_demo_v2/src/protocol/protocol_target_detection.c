@@ -505,6 +505,7 @@ static int get_target_detect_detection_json(cJSON *root)
         cJSON_AddNumberToObject(js_box, "w", (double)snap.boxes[i].w);
         cJSON_AddNumberToObject(js_box, "h", (double)snap.boxes[i].h);
         cJSON_AddNumberToObject(js_box, "cls", (double)snap.boxes[i].cls);
+        cJSON_AddNumberToObject(js_box, "confidence", (double)snap.boxes[i].confidence);
         cJSON_AddNumberToObject(js_box, "id", (double)snap.boxes[i].id);
         cJSON_AddStringToObject(js_box, "name", snap.boxes[i].name);
     }

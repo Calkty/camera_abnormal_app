@@ -1,6 +1,7 @@
 #include "config.h"
 
 #include <stdlib.h>
+#include <math.h>
 
 static void trim(char *s)
 {
@@ -95,6 +96,17 @@ int config_load(const char *path, AppConfig *cfg)
             snprintf(cfg->hikflow_model_path, sizeof(cfg->hikflow_model_path), "%s", eq + 1);
         } else if (strcmp(line, "abnormal_classes") == 0) {
             snprintf(cfg->abnormal_classes, sizeof(cfg->abnormal_classes), "%s", eq + 1);
+        } else if (strcmp(line, "confidence_threshold") == 0) {
+            char *end;
+            errno = 0;
+            float value = strtof(eq + 1, &end);
+            if (errno || end == eq + 1 || *end || !isfinite(value) ||
+                value < 0.0f || value > 1.0f) {
+                ca_log("ERR", "confidence_threshold must be a number in [0,1]");
+                fclose(fp);
+                return CA_ERR;
+            }
+            cfg->confidence_threshold = value;
         } else if (strcmp(line, "human_alarm_ip") == 0) {
             snprintf(cfg->human_alarm_ip, sizeof(cfg->human_alarm_ip), "%s", eq + 1);
         } else if (strcmp(line, "human_alarm_port") == 0) {

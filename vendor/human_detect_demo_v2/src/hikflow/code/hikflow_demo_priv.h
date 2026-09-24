@@ -293,6 +293,7 @@ typedef struct _HIKFLOW_DEMO_STATUS_EXIT_
 */
 typedef struct _HIKFLOW_DEMO_CTRL_
 {
+    float target_scores[HIKFLOW_DEMO_MAX_OUTPUT_BOX_NUM];
 	unsigned int                        magic;                                      /*!< magic number */
 
     /*!< global param */    
@@ -379,7 +380,7 @@ int hikflow_proc_init(HIKFLOW_DEMO_CTRL* pCtrl);
 * 
 * @return           0 if successful, otherwise an error number returned
 */
-int hikflow_proc_alg_from_cam(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_VIDEO_FRAME_INFO_ST *pfrm,OPDEVSDK_POS_TARGET_LIST_INFO_ST *ptarget);
+int hikflow_proc_alg_from_cam(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_VIDEO_FRAME_INFO_ST *pfrm,OPDEVSDK_POS_TARGET_LIST_INFO_ST *ptarget, float *alarm_confidence);
 
 /** 
 * @brief            net processing function in file-reading mode

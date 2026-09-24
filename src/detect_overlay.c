@@ -36,12 +36,13 @@ static void log_snapshot(int raw_count, const CaDetSnapshot *snap)
     }
 
     ca_log("ERR",
-           "detect overlay: n=%d%s frame=%dx%d ts=%lld box0=(%.4f,%.4f,%.4f,%.4f) cls=%d id=%d name=%s",
+           "detect overlay: n=%d%s frame=%dx%d ts=%lld box0=(%.4f,%.4f,%.4f,%.4f) cls=%d conf=%.2f id=%d name=%s",
            snap->count, raw_count > snap->count ? " truncated" : "",
            snap->frame_w, snap->frame_h, (long long)snap->ts_ms,
            (double)snap->boxes[0].x, (double)snap->boxes[0].y,
            (double)snap->boxes[0].w, (double)snap->boxes[0].h,
-           snap->boxes[0].cls, snap->boxes[0].id, snap->boxes[0].name);
+           snap->boxes[0].cls, (double)snap->boxes[0].confidence,
+           snap->boxes[0].id, snap->boxes[0].name);
 }
 
 static float clamp_unit(float v)
@@ -105,6 +106,7 @@ int ca_detect_overlay_publish(const CaDetBox *boxes, int count, int frame_w,
         next.boxes[i].w = clamp_unit(boxes[i].w);
         next.boxes[i].h = clamp_unit(boxes[i].h);
         next.boxes[i].cls = boxes[i].cls;
+        next.boxes[i].confidence = clamp_unit(boxes[i].confidence);
         next.boxes[i].id = boxes[i].id;
         memcpy(next.boxes[i].name, boxes[i].name, sizeof(next.boxes[i].name));
         next.boxes[i].name[CA_DETECT_OVERLAY_NAME_LEN - 1] = '\0';

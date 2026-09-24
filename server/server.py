@@ -8,8 +8,14 @@ from pathlib import Path
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 
-BASE_DIR = Path(os.environ.get("CAMERA_UPLOAD_DIR", "uploads")).resolve()
+if __package__:
+    from .storage_config import resolve_upload_dir
+else:
+    from storage_config import resolve_upload_dir
+
+BASE_DIR = resolve_upload_dir()
 BASE_DIR.mkdir(parents=True, exist_ok=True)
+print(f"[STORAGE] upload directory: {BASE_DIR}", flush=True)
 
 app = FastAPI()
 
@@ -21,8 +27,6 @@ def _print_detection(meta: dict, event_dir: Path) -> None:
         "metadata": meta,
         "saved_dir": str(event_dir),
     }
-    if meta.get("event_type") == "human_abnormal":
-        record["confidence_note"] = "当前摄像机上报的 confidence 固定为 1.0，并非真实模型分数"
     print("[DETECTION] " + json.dumps(record, ensure_ascii=False), flush=True)
 
 

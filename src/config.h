@@ -10,6 +10,7 @@ typedef struct {
     char work_dir[CA_MAX_PATH];
     char hikflow_model_path[CA_MAX_FULL_PATH];
     char abnormal_classes[128];
+    float confidence_threshold;
     char human_alarm_ip[64];
     int human_alarm_port;
     int listen_port;

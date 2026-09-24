@@ -24,7 +24,7 @@ static int sim_open(const char *p,int f,...) { (void)p;assert(f&O_NOFOLLOW);retu
 static int sim_openat(int fd,const char *p,int f,...) {
     assert(fd==10 && (f&O_NOFOLLOW));
     if(!strcmp(p,"events")) return 20;
-    assert(!strcmp(p,".events_clear_once_v1.done"));
+    assert(!strcmp(p,".events_clear_once_20260921.done"));
     if(f&O_CREAT) { if(fail_marker){errno=ENOSPC;return -1;} assert(!marked);marked=1;return 30; }
     if(marked)return 30;errno=ENOENT;return -1;
 }

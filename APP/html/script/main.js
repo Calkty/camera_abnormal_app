@@ -916,7 +916,10 @@ $(function () {
         that.context2D.lineWidth = 2;
         that.context2D.strokeRect(x, y, w, h);
 
-        var szLabel = box.name ? box.name + " id:" + box.id : "id:" + box.id;
+        var szScore = typeof box.confidence === "number" && isFinite(box.confidence)
+          ? box.confidence.toFixed(2) : "--";
+        var szName = typeof box.name === "string" ? box.name.trim() : "";
+        var szLabel = (szName ? szName + " " : "") + "class:" + box.cls + " confidence:" + szScore;
         that.context2D.font = "14px sans-serif";
         var iBaseline = y >= 18 ? y - 4 : y + 16;
         var iTextW = that.context2D.measureText(szLabel).width + 4;

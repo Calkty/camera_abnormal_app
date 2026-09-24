@@ -62,6 +62,19 @@ GET /ISAPI/Custom/OpenPlatform/extern/cameraAbnormal/detections?format=json[&cha
 | 独立性 | 叠加层不依赖播放器，播放器初始化失败不影响检测框轮询 |
 | 图层 | 新增 `#detectCanvas`，`pointer-events:none`，层级低于规则编辑用的 `#liveviewCanvas` |
 
+## 画面上有两层框，别混淆
+
+| 层 | 画在哪 | 由谁画 | 谁能看见 |
+| --- | --- | --- | --- |
+| 烧进码流那层 | 视频像素本身 | `hikflow_demo_proc_pos()` → `opdevsdk_pos_procTarget/procText` | 任何看这路码流的客户端（含切片录像、抓包） |
+| 网页叠加层 | `#detectCanvas` | `main.js: DetectOverlay` | 只在不依赖播放器的网页上 |
+
+两层文字现在**完全一致**：`<类别名> class:<模型类别号> confidence:<分数>`。
+
+烧进码流那层曾经是 `<类别名> id:<每帧编号>`。那个 `id` 只是本帧过滤后的序号、**每帧重排**，
+不代表同一个目标，所以不再显示（API 里仍保留 `id` 字段）。排查时若两层文字不一致，
+先 Ctrl+F5 硬刷新，确认网页加载的是新的 `main.js`。
+
 ## 模块开关
 
 | Make 参数 | C 宏 | 控制 |

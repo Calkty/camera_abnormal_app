@@ -826,7 +826,7 @@ static int hikflow_demo_save_data(char *name,void *vir,void *phy,int size)
 }
 
 /*!< alarm process */
-static int hikflow_demo_proc_alarm(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_ST *alarm_target,OPDEVSDK_VIDEO_FRAME_INFO_ST *frame,OPDEVSDK_POS_RULE_ST *rule_info)
+static int hikflow_demo_proc_alarm(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_ST *alarm_target,OPDEVSDK_VIDEO_FRAME_INFO_ST *frame,OPDEVSDK_POS_RULE_ST *rule_info, float alarm_confidence)
 {
     int ret = 0, i = 0, j = 0, k =0;
     int alarm_flag = -1;
@@ -877,7 +877,7 @@ static int hikflow_demo_proc_alarm(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_
     /*!< alarm flg=1 shows that it is time to make alarm */
     if(1 == alarm_flag)
     {
-        camera_abnormal_on_human_alarm((int64_t)frame->timeStamp / 1000, 1.0f);
+        camera_abnormal_on_human_alarm((int64_t)frame->timeStamp / 1000, alarm_confidence);
         /* POS targets/text are emitted separately by hikflow_demo_proc_pos(). */
         if (!CA_ENABLE_LEGACY_ALARM) return HIKFLOW_DEMO_OK;
 
@@ -1007,6 +1007,7 @@ static void hikflow_demo_publish_overlay(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_T
         boxes[i].w = tgt->region.point[1].x - tgt->region.point[0].x;
         boxes[i].h = tgt->region.point[3].y - tgt->region.point[0].y;
         boxes[i].cls = tgt->res[0];
+        boxes[i].confidence = pCtrl->target_scores[i];
         boxes[i].id = tgt->id;
         if(attr_name != NULL)
         {
@@ -1075,13 +1076,20 @@ static int hikflow_demo_proc_pos(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_LI
         /*!< get attribute name from hikflow_attr.json */
         char *name = NULL;
         name = hikflow_demo_get_attr_name(pCtrl,class_type);
+        /* Keep this text identical to the web canvas label (main.js) so the
+         * burned-in overlay and the browser overlay never disagree. The
+         * per-frame target id is deliberately not shown: it is only the
+         * position inside this frame's filtered list and is renumbered every
+         * frame. target_scores[] is indexed the same way as pTgt[], so
+         * entry i is this target's own score. */
         if(name != NULL)
         {
-            snprintf(tmp_str[i],256,"%s id:%d",name,pack_target->tgtList.pTgt[i].id);    
+            snprintf(tmp_str[i],256,"%.*s class:%d confidence:%.2f",
+                     (int)(sizeof(tmp_str[i]) - 40),name,class_type,(double)pCtrl->target_scores[i]);
         }
         else
         {
-            snprintf(tmp_str[i],256,"id:%d",pack_target->tgtList.pTgt[i].id);    
+            snprintf(tmp_str[i],256,"class:%d confidence:%.2f",class_type,(double)pCtrl->target_scores[i]);
         }
         pack_target->tgtList.pTgt[i].res[0] = 0;     
         str[i].str = tmp_str[i];
@@ -1363,7 +1371,8 @@ static int hikflow_demo_alg_thread_from_cam(void *arg)
         
         proc_err = 0;
         isfw_stat_time_enter(&pCtrl->net_proc);
-        ret = hikflow_proc_alg_from_cam(pCtrl,&net_frame, &pack_target);
+        float alarm_confidence = 0.0f;
+        ret = hikflow_proc_alg_from_cam(pCtrl,&net_frame, &pack_target, &alarm_confidence);
         isfw_stat_time_exit(&pCtrl->net_proc);        
         if(ret != HIKFLOW_DEMO_OK)
         {
@@ -1385,7 +1394,7 @@ static int hikflow_demo_alg_thread_from_cam(void *arg)
             HIKFLOW_ASSER(ret != HIKFLOW_DEMO_OK,ret);
             
             /*!< fourth,process alarm information */
-            ret = hikflow_demo_proc_alarm(pCtrl,&alarm_target,&cap_frame,&rule_list);
+            ret = hikflow_demo_proc_alarm(pCtrl,&alarm_target,&cap_frame,&rule_list,alarm_confidence);
             HIKFLOW_ASSER(ret != HIKFLOW_DEMO_OK,ret);
         }
 

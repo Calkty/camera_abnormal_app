@@ -65,10 +65,14 @@ int main(void)
     /* Two targets, as the HIKFlow algorithm thread would publish them. */
     b[0] = mkbox(0.25f, 0.5f, 0.125f, 0.25f, 0, 1, "person");
     b[1] = mkbox(0.75f, 0.25f, 0.1f, 0.2f, 2, 2, "car");
+    b[0].confidence = 0.8234f;
+    b[1].confidence = 0.6178f;
     test_now_ms = 2000;
     assert(ca_detect_overlay_publish(b, 2, 1920, 1080, 123456) == CA_OK);
     ca_detect_overlay_get(&snap);
     assert(snap.seq == 1 && snap.count == 2);
+    assert(fabsf(snap.boxes[0].confidence - 0.8234f) < 0.00001f);
+    assert(fabsf(snap.boxes[1].confidence - 0.6178f) < 0.00001f);
     assert(snap.frame_w == 1920 && snap.frame_h == 1080 && snap.ts_ms == 123456);
     assert(snap.boxes[0].cls == 0 && snap.boxes[0].id == 1);
     assert(strcmp(snap.boxes[0].name, "person") == 0);

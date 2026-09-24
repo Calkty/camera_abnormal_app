@@ -141,7 +141,7 @@ static int write_json(const char *path, const AppConfig *cfg, const AbnormalEven
             "{\n"
             "  \"camera_id\": \"%s\",\n"
             "  \"event_type\": \"%s\",\n"
-            "  \"confidence\": %.4f,\n"
+            "  \"confidence\": %.2f,\n"
             "  \"event_wall_ms\": %lld,\n"
             "  \"detect_done_ms\": %lld,\n"
             "  \"clip_start_ms\": %lld,\n"

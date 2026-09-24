@@ -6,4 +6,4 @@ services:
     environment:
       CAMERA_UPLOAD_DIR: /data/uploads
     volumes:
-      - ./uploads:/data/uploads
+      - "${CAMERA_UPLOAD_HOST_DIR:-./uploads}:/data/uploads"
