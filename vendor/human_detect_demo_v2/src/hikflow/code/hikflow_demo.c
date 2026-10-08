@@ -641,6 +641,35 @@ static int hikflow_demo_init_bsc(HIKFLOW_DEMO_CTRL* pCtrl)
     return HIKFLOW_DEMO_OK;
 }
 
+/*!< stream played by the HTML live view (channel URL suffix 02, see main.js LIVE) */
+#define HIKFLOW_DEMO_WEB_STREAM_ID 2
+
+/*!< ensure target/rule/text POS metadata is packed into the stream used by the web preview.
+ *
+ * Without this the device still detects targets, but the rectangles are never
+ * packed into stream 2, so the web live view shows no boxes at all. */
+static void hikflow_demo_enable_web_pos(HIKFLOW_DEMO_CTRL* pCtrl)
+{
+    int ret = 0;
+
+    if(NULL == pCtrl)
+    {
+        return;
+    }
+
+    ret = opdevsdk_pos_setProcType(pCtrl->app_chan, HIKFLOW_DEMO_WEB_STREAM_ID,
+        OPDEVSDK_POS_DATA_PROC_TYPE_AFTER_ENC);
+    if(OPDEVSDK_S_OK != ret)
+    {
+        HIKFLOW_ERR("opdevsdk_pos_setProcType chan %d stream %d err 0x%x\n",
+            pCtrl->app_chan, HIKFLOW_DEMO_WEB_STREAM_ID, ret);
+        return;
+    }
+
+    HIKFLOW_LOG("web POS enabled: chan %d stream %d\n",
+        pCtrl->app_chan, HIKFLOW_DEMO_WEB_STREAM_ID);
+}
+
 /*!< de-initialize the vin module in bsc library */
 static int hikflow_demo_deinit_bsc_vin(HIKFLOW_DEMO_CTRL* pCtrl)
 {
@@ -843,6 +872,8 @@ static int hikflow_demo_proc_alarm(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_
         return HIKFLOW_DEMO_OK;
     }
 
+    camera_abnormal_on_detection_frame(alarm_target->id >= 1, alarm_target->res[0], alarm_confidence, (int64_t)frame->timeStamp / 1000);
+
     int chan = pCtrl->app_chan;
     
     HIKFLOW_DBG("hikflow_demo_proc_alarm begin\n");
@@ -877,7 +908,6 @@ static int hikflow_demo_proc_alarm(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_
     /*!< alarm flg=1 shows that it is time to make alarm */
     if(1 == alarm_flag)
     {
-        camera_abnormal_on_human_alarm((int64_t)frame->timeStamp / 1000, alarm_confidence);
         /* POS targets/text are emitted separately by hikflow_demo_proc_pos(). */
         if (!CA_ENABLE_LEGACY_ALARM) return HIKFLOW_DEMO_OK;
 
@@ -1076,20 +1106,13 @@ static int hikflow_demo_proc_pos(HIKFLOW_DEMO_CTRL* pCtrl,OPDEVSDK_POS_TARGET_LI
         /*!< get attribute name from hikflow_attr.json */
         char *name = NULL;
         name = hikflow_demo_get_attr_name(pCtrl,class_type);
-        /* Keep this text identical to the web canvas label (main.js) so the
-         * burned-in overlay and the browser overlay never disagree. The
-         * per-frame target id is deliberately not shown: it is only the
-         * position inside this frame's filtered list and is renumbered every
-         * frame. target_scores[] is indexed the same way as pTgt[], so
-         * entry i is this target's own score. */
         if(name != NULL)
         {
-            snprintf(tmp_str[i],256,"%.*s class:%d confidence:%.2f",
-                     (int)(sizeof(tmp_str[i]) - 40),name,class_type,(double)pCtrl->target_scores[i]);
+            snprintf(tmp_str[i],256,"%s id:%d",name,pack_target->tgtList.pTgt[i].id);    
         }
         else
         {
-            snprintf(tmp_str[i],256,"class:%d confidence:%.2f",class_type,(double)pCtrl->target_scores[i]);
+            snprintf(tmp_str[i],256,"id:%d",pack_target->tgtList.pTgt[i].id);    
         }
         pack_target->tgtList.pTgt[i].res[0] = 0;     
         str[i].str = tmp_str[i];
@@ -1372,7 +1395,11 @@ static int hikflow_demo_alg_thread_from_cam(void *arg)
         proc_err = 0;
         isfw_stat_time_enter(&pCtrl->net_proc);
         float alarm_confidence = 0.0f;
+        struct timeval _tv0, _tv1;
+        gettimeofday(&_tv0, NULL);
         ret = hikflow_proc_alg_from_cam(pCtrl,&net_frame, &pack_target, &alarm_confidence);
+        gettimeofday(&_tv1, NULL);
+        syslog(LOG_LOCAL2 | LOG_NOTICE, "infer_time %lld us\n", (long long)(_tv1.tv_sec - _tv0.tv_sec) * 1000000LL + (_tv1.tv_usec - _tv0.tv_usec));
         isfw_stat_time_exit(&pCtrl->net_proc);        
         if(ret != HIKFLOW_DEMO_OK)
         {
@@ -2118,6 +2145,9 @@ int hikflow_demo_init(int argc, char *argv[])
     /*!< key step 1: initialize the bsc library */
     _stack_mng_proc_time_(ret = hikflow_demo_init_bsc(pCtrl),HIKFLOW_DEMO_WAIT_TIME_OUT);
     HIKFLOW_KEY_RET(ret != HIKFLOW_DEMO_OK,HIKFLOW_DEMO_ERR_FAILED,"hikflow_demo_init_bsc err");
+
+    /*!< the HTML live view plays stream 2; enable POS there or the detected boxes are never drawn */
+    hikflow_demo_enable_web_pos(pCtrl);
 
     /*!< initialize the memory statistics,so we can get the recorde online,it must be initialized after bsc */
     ret = hikflow_demo_init_mem(pCtrl);

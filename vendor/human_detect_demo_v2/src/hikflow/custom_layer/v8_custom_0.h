@@ -10,7 +10,7 @@ extern "C" {
 // Attention, all element of validshape should be initialized, 
 //            this function will not touch the non-valid dim of validshape
 // dllp_iou_thresh_threshed_data_1's dim is 2
-int v8_custom_0_Forward(float* dllp_conf_thresh_1_obj_data, float* model_22_Concat_4_output_0_3_transpose, float* model_22_Sigmoid_output_0_1_transpose, float* dllp_conf_thresh_2_gathernd_1_init_0, float* dllp_iou_thresh_threshed_data_1, int32_t * dllp_iou_thresh_threshed_data_2_shape, void* __auxi_mem_addr__);
+int v8_custom_0_Forward(float* dllp_conf_thresh_1_obj_data, float* model_22_Concat_2_output_0_1_transpose, float* model_22_Sigmoid_output_0_1_transpose, float* dllp_conf_thresh_2_gathernd_1_init_0, float* dllp_iou_thresh_threshed_data_1, int32_t * dllp_iou_thresh_threshed_data_2_shape, void* __auxi_mem_addr__);
 
 
 // reshape function

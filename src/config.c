@@ -44,6 +44,8 @@ void config_defaults(AppConfig *cfg)
     cfg->upload_retry_interval_ms = 3000;
     cfg->cooldown_seconds = 20;
     cfg->infer_interval_seconds = 0;
+    cfg->confirm_window_m = 20;
+    cfg->confirm_require_n = 10;
     cfg->codec = CODEC_UNKNOWN;
     cfg->fps = 25;
     cfg->debug_level = 0;
@@ -165,6 +167,10 @@ int config_load(const char *path, AppConfig *cfg)
             cfg->cooldown_seconds = atoi(eq + 1);
         } else if (strcmp(line, "infer_interval_seconds") == 0) {
             cfg->infer_interval_seconds = atoi(eq + 1);
+        } else if (strcmp(line, "confirm_window_m") == 0) {
+            cfg->confirm_window_m = atoi(eq + 1);
+        } else if (strcmp(line, "confirm_require_n") == 0) {
+            cfg->confirm_require_n = atoi(eq + 1);
         } else if (strcmp(line, "codec") == 0) {
             cfg->codec = parse_codec(eq + 1);
         } else if (strcmp(line, "fps") == 0) {
@@ -187,6 +193,15 @@ int config_load(const char *path, AppConfig *cfg)
     }
     if (cfg->infer_interval_seconds < 0) {
         cfg->infer_interval_seconds = 0;
+    }
+    if (cfg->confirm_window_m < 1) {
+        cfg->confirm_window_m = 20;
+    }
+    if (cfg->confirm_require_n < 1) {
+        cfg->confirm_require_n = 10;
+    }
+    if (cfg->confirm_require_n > cfg->confirm_window_m) {
+        cfg->confirm_require_n = cfg->confirm_window_m;
     }
     if (cfg->upload_retry <= 0) {
         cfg->upload_retry = 3;

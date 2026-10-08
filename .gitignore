@@ -1,18 +1,75 @@
-# Packaged HEOP installers are build outputs (created by pack.sh in APP/,
-# then moved to output/ by makeapp.sh). Never commit them: a stale .app left
-# in APP/ is packed into the next package and moved to output/ as well.
+# ---------------------------------------------------------------------------
+# 这个仓库只发布「应用自身源码 + 构建脚本」。
+# 第三方 SDK/模型、编译产物、本地工具、过程文档都不入库，下面按类别列出。
+# 注意：gitignore 只对**未跟踪**文件生效；已经提交过的文件要先
+#       `git rm --cached <路径>` 才会真正离开仓库（本仓库已按此清理过）。
+# ---------------------------------------------------------------------------
+
+# ========================== 文档 ==========================
+# 只保留 README.md 当门面，其余 .md 都是本地的过程/调试记录，不上传。
+*.md
+!README.md
+# 根目录的中文说明文本
+/先看这里.txt
+
+# ========================== 本地工具 / 不对外发布 ==========================
+# 两个事件接收端：Python(FastAPI) 版与 Qt(PySide6) 版，仅本地调试用
+/server/
+/server_qt/
+# Ultralytics 的本地设置（内容是本机绝对路径，不应公开）
+/Ultralytics/
+# 主机侧单元测试：用本机 gcc 编译运行，不参与设备构建
+/tests/
+
+# ========================== 安装包 / 构建产物 ==========================
+# HEOP 安装包：pack.sh 生成到 APP/，makeapp.sh 再移到 output/。
+# 千万不要提交：APP/ 里残留的旧 .app 会被打进下一个包并一起挪进 output/。
 APP/*.app
 /output/
+# 根目录这个二进制是早期误提交的编译产物（真正的产物在构建时生成到 APP/）
+/camera_abnormal_app
+# Makefile 根据 MODULE_* 变量渲染出来的模块开关头
+.module-flags
+.module-flags.tmp
 
-# Local unit test binaries (built by hand with the host compiler, see tests/)
-tests/*.exe
-tests/*.o
+# ========================== APP/ 里的生成物 ==========================
+# `make install` 会把 vendor/ 下的东西复制进 APP/，全部可以重新生成。
+# APP/ 里真正需要入库的只有三个：META-INFO/、cameraAbnormal.sh、html/
+APP/camera_abnormal_app
+APP/Model_P_NPU0.bin
+APP/libusr_trans.so
+APP/libusr_trans.so.*
+APP/hf_dbg
+APP/app.conf
+APP/hikflow_attr.json
+APP/hikflow_config.json
+APP/test.wav
+APP/test.jpg
+APP/data/
 
-# Python is only used for local helpers and scratch scripts, not the app
-# itself. Note this only hides *untracked* files: check_model_bin.py and
-# server/server.py were committed before this rule and stay tracked, so they
-# keep showing up in git status. Run `git rm --cached <file>` to drop them.
+# ========================== 编译中间产物 ==========================
+*.o
+*.a
+*.elf
+*.exe
+*.map
+
+# vendor 下上一版模型命名的自定义层残留（Makefile 用的是 custom_v8_* / v8_* 那一套，
+# 这些 yolov8_* 文件不参与编译，留着只是脏数据）
+vendor/human_detect_demo_v2/src/hikflow/custom_layer/*yolov8*
+
+# ========================== Python ==========================
 *.py
+# 仓库里唯一保留的 Python：校验模型 BIN 的输入格式（makeapp.sh 会引用它）
+!check_model_bin.py
 *.pyc
 __pycache__/
-server/.venv/
+.venv/
+venv/
+
+# ========================== 编辑器 / 系统 ==========================
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini

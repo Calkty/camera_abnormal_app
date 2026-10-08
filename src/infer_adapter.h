@@ -11,7 +11,7 @@ typedef struct {
 } InferContext;
 
 int abnormal_event_publish(EventQueue *queue, const char *event_type, float confidence,
-                           int64_t event_wall_ms);
+                           int64_t event_wall_ms, int class_id);
 void *infer_thread(void *arg);
 
 #endif

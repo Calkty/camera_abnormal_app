@@ -510,6 +510,19 @@ static int get_target_detect_detection_json(cJSON *root)
         cJSON_AddStringToObject(js_box, "name", snap.boxes[i].name);
     }
 
+    /*!< The page's "auto record" button needs the operator server address,
+         which lives in app.conf. Published at the root rather than inside the
+         detections object: unlike the boxes it must already be available while
+         seq is still 0, and the page reads it before the seq check. */
+    {
+        char record_url[CA_MAX_URL];
+
+        if (CA_OK == ca_detect_overlay_get_record_url(record_url, sizeof(record_url)))
+        {
+            cJSON_AddStringToObject(root, "recordUrl", record_url);
+        }
+    }
+
     return PRO_OK;
 }
 

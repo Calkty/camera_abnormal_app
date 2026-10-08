@@ -142,6 +142,7 @@ static int write_json(const char *path, const AppConfig *cfg, const AbnormalEven
             "  \"camera_id\": \"%s\",\n"
             "  \"event_type\": \"%s\",\n"
             "  \"confidence\": %.2f,\n"
+            "  \"class_id\": %d,\n"
             "  \"event_wall_ms\": %lld,\n"
             "  \"detect_done_ms\": %lld,\n"
             "  \"clip_start_ms\": %lld,\n"
@@ -152,7 +153,7 @@ static int write_json(const char *path, const AppConfig *cfg, const AbnormalEven
             "  \"video_path\": \"%s\",\n"
             "  \"server_should_convert_mp4\": true\n"
             "}\n",
-            cfg->camera_id, ev->event_type, ev->confidence,
+            cfg->camera_id, ev->event_type, ev->confidence, ev->class_id,
             (long long)ev->event_wall_ms, (long long)ev->detect_done_ms,
             (long long)clip_start_ms, (long long)clip_end_ms,
             codec == CODEC_H265 ? "h265" : "h264", cfg->fps, packet_count, video_path);

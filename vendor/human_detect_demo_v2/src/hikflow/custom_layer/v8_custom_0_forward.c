@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-DSL_DLL int v8_custom_0_Forward(float * dllp_conf_thresh_1_obj_data, float * model_22_Concat_4_output_0_3_transpose, float * model_22_Sigmoid_output_0_1_transpose, float * dllp_conf_thresh_2_gathernd_1_init_0, float * dllp_iou_thresh_threshed_data, int32_t * dllp_iou_thresh_threshed_data_2_shape, void * __auxi_mem_addr__)
+DSL_DLL int v8_custom_0_Forward(float * dllp_conf_thresh_1_obj_data, float * model_22_Concat_2_output_0_1_transpose, float * model_22_Sigmoid_output_0_1_transpose, float * dllp_conf_thresh_2_gathernd_1_init_0, float * dllp_iou_thresh_threshed_data, int32_t * dllp_iou_thresh_threshed_data_2_shape, void * __auxi_mem_addr__)
 {
     int32_t sub_output_shape[SUB_LEN * SHAPE_LEN] = {0};
     int32_t sub_output_size[SUB_LEN] = {0};
@@ -39,7 +39,7 @@ DSL_DLL int v8_custom_0_Forward(float * dllp_conf_thresh_1_obj_data, float * mod
     void *__real_auxi_mem_addr__ = dllp_conf_thresh_threshed_data + sub_output_size[0];
 
     memset(__real_auxi_mem_addr__, 0, sub_auxi_mem_size[0]);
-    v8_custom_0_sub_0_Forward(dllp_conf_thresh_1_obj_data, model_22_Concat_4_output_0_3_transpose, model_22_Sigmoid_output_0_1_transpose, dllp_conf_thresh_2_gathernd_1_init_0, dllp_conf_thresh_threshed_data, &sub_output_shape[0 * SHAPE_LEN], __real_auxi_mem_addr__);
+    v8_custom_0_sub_0_Forward(dllp_conf_thresh_1_obj_data, model_22_Concat_2_output_0_1_transpose, model_22_Sigmoid_output_0_1_transpose, dllp_conf_thresh_2_gathernd_1_init_0, dllp_conf_thresh_threshed_data, &sub_output_shape[0 * SHAPE_LEN], __real_auxi_mem_addr__);
     memset(__real_auxi_mem_addr__, 0, sub_auxi_mem_size[1]);
     v8_custom_0_sub_1_Forward(dllp_conf_thresh_threshed_data, sub_output_shape[0 * SHAPE_LEN + 0], dllp_iou_thresh_threshed_data, &sub_output_shape[1 * SHAPE_LEN], __real_auxi_mem_addr__);
 

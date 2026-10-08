@@ -31,6 +31,69 @@ int32_t getAppRunningChan(int32_t *chan)
     return -1;
 }
 
+typedef struct {
+    int detected;
+    int class_id;
+} ConfirmSample;
+
+static ConfirmSample g_confirm_samples[256];
+static int g_confirm_window_m = 20;
+static int g_confirm_window_n = 10;
+static int g_confirm_window_inited = 0;
+static int g_confirm_next = 0;
+static int g_confirm_fill = 0;
+
+void camera_abnormal_on_detection_frame(int detected, int class_id, float confidence, int64_t frame_ms)
+{
+    int i, hit = 0, best_class = -1, best_count = 0;
+    int hist[16] = {0};
+    int64_t now_ms = ca_now_ms();
+
+    if (!g_human_event_queue) {
+        return;
+    }
+    if (!g_confirm_window_inited) {
+        g_confirm_window_m = 20;
+        g_confirm_window_n = 10;
+        g_confirm_window_inited = 1;
+    }
+    if (g_confirm_window_m > 256) g_confirm_window_m = 256;
+    if (g_confirm_window_m < 1) g_confirm_window_m = 1;
+    if (g_confirm_window_n < 1) g_confirm_window_n = 1;
+    if (g_confirm_window_n > g_confirm_window_m) g_confirm_window_n = g_confirm_window_m;
+    if (frame_ms < 946684800000LL || frame_ms > now_ms + 60000) {
+        frame_ms = now_ms;
+    }
+
+    g_confirm_samples[g_confirm_next].detected = detected ? 1 : 0;
+    g_confirm_samples[g_confirm_next].class_id = class_id;
+    g_confirm_next = (g_confirm_next + 1) % g_confirm_window_m;
+    if (g_confirm_fill < g_confirm_window_m) g_confirm_fill++;
+
+    for (i = 0; i < g_confirm_fill; i++) {
+        if (g_confirm_samples[i].detected) {
+            hit++;
+            if (g_confirm_samples[i].class_id >= 0 && g_confirm_samples[i].class_id < 16) {
+                hist[g_confirm_samples[i].class_id]++;
+            }
+        }
+    }
+    if (hit < g_confirm_window_n) {
+        return;
+    }
+
+    for (i = 0; i < 16; i++) {
+        if (hist[i] > best_count) {
+            best_count = hist[i];
+            best_class = i;
+        }
+    }
+    g_confirm_next = 0;
+    g_confirm_fill = 0;
+    ca_debug_log(1, "confirm alarm: hit=%d m=%d n=%d class=%d", hit, g_confirm_window_m, g_confirm_window_n, best_class);
+    abnormal_event_publish(g_human_event_queue, "human_abnormal", confidence, frame_ms, best_class);
+}
+
 void camera_abnormal_on_human_alarm(int64_t event_wall_ms, float confidence)
 {
     int64_t now_ms = ca_now_ms();
@@ -46,11 +109,11 @@ void camera_abnormal_on_human_alarm(int64_t event_wall_ms, float confidence)
     }
     ca_debug_log(1, "human alarm bridge: event_wall_ms=%lld confidence=%.3f",
                  (long long)event_wall_ms, confidence);
-    abnormal_event_publish(g_human_event_queue, "human_abnormal", confidence, event_wall_ms);
+    abnormal_event_publish(g_human_event_queue, "human_abnormal", confidence, event_wall_ms, -1);
 }
 
 int abnormal_event_publish(EventQueue *queue, const char *event_type, float confidence,
-                           int64_t event_wall_ms)
+                           int64_t event_wall_ms, int class_id)
 {
     AbnormalEvent ev;
     if (!queue) return CA_ERR;
@@ -59,6 +122,7 @@ int abnormal_event_publish(EventQueue *queue, const char *event_type, float conf
     ev.detect_done_ms = ca_now_ms();
     ev.channel = 0;
     ev.confidence = confidence;
+    ev.class_id = class_id;
     snprintf(ev.event_type, sizeof(ev.event_type), "%s", event_type ? event_type : "abnormal");
     if (event_queue_push(queue, &ev, 0) != CA_OK) {
         ca_log("WARN", "abnormal event dropped: type=%s event_wall_ms=%lld",
@@ -89,6 +153,9 @@ static int start_human_detect_demo(const AppConfig *cfg, EventQueue *queue)
     ca_log("INFO", "detection confidence_threshold=%.3f", cfg->confidence_threshold);
     alarm_set_http_target(cfg->human_alarm_ip, cfg->human_alarm_port);
     hikflow_demo_set_infer_interval_ms(cfg->infer_interval_seconds * 1000);
+    g_confirm_window_m = cfg->confirm_window_m;
+    g_confirm_window_n = cfg->confirm_require_n;
+    g_confirm_window_inited = 1;
     hikflow_demo_set_runtime_options(cfg->hikflow_model_path, cfg->abnormal_classes);
     ca_debug_log(1, "human detect config: alarm=%s:%d infer_interval_ms=%d app_chan=%d",
                  cfg->human_alarm_ip, cfg->human_alarm_port,
@@ -195,7 +262,7 @@ void *infer_thread(void *arg)
             int64_t now = ca_now_ms();
             if (last_event_ms == 0 ||
                 now - last_event_ms >= (int64_t)ctx->cfg->test_event_interval_seconds * 1000) {
-                if (abnormal_event_publish(ctx->event_queue, "test_abnormal", 0.990f, now) == CA_OK) {
+                if (abnormal_event_publish(ctx->event_queue, "test_abnormal", 0.990f, now, -1) == CA_OK) {
                     ca_log("INFO", "test abnormal event published");
                 }
                 last_event_ms = now;

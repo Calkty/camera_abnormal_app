@@ -412,7 +412,7 @@ int CUSTOM_V8_CUSTOM_0_SUB_0_Forward(void                      *handle,
     __auxi_mem_addr__ = v8_custom_0_sub_0_layer->scratch_memory;
     ///< define the input of forward function
     float *dllp_conf_thresh_1_obj_data = (float*)ld->input_blobs[0]->data;
-    float *model_22_Concat_4_output_0_3_transpose = (float*)ld->input_blobs[1]->data;
+    float *model_22_Concat_2_output_0_1_transpose = (float*)ld->input_blobs[1]->data;
     float *model_22_Sigmoid_output_0_1_transpose = (float*)ld->input_blobs[2]->data;
     ///< define the output of forward function
     float *dllp_conf_thresh_threshed_data = (float*)ld->output_blobs[0].data;
@@ -438,7 +438,7 @@ int CUSTOM_V8_CUSTOM_0_SUB_0_Forward(void                      *handle,
     CHECK_ERROR(NULL == handle, "CUSTOM_V8_CUSTOM_0_SUB_0_Forward handle = null error!\n", HIKFLOW_STS_ERR_CUS_LAYER_NULL_PTR);
     CHECK_ERROR(NULL == ld, "CUSTOM_V8_CUSTOM_0_SUB_0_Forward ld = null error!\n", HIKFLOW_STS_ERR_CUS_LAYER_NULL_PTR);
     ///< call forward function
-    sts = v8_custom_0_sub_0_Forward( dllp_conf_thresh_1_obj_data, model_22_Concat_4_output_0_3_transpose, model_22_Sigmoid_output_0_1_transpose, dllp_conf_thresh_2_gathernd_1_init_0, dllp_conf_thresh_threshed_data, dllp_conf_thresh_threshed_data_2_shape, __auxi_mem_addr__ );
+    sts = v8_custom_0_sub_0_Forward( dllp_conf_thresh_1_obj_data, model_22_Concat_2_output_0_1_transpose, model_22_Sigmoid_output_0_1_transpose, dllp_conf_thresh_2_gathernd_1_init_0, dllp_conf_thresh_threshed_data, dllp_conf_thresh_threshed_data_2_shape, __auxi_mem_addr__ );
     CHECK_ERROR(HIKFLOW_STS_OK != sts, "CUSTOM_V8_CUSTOM_0_SUB_0_Forward v8_custom_0_sub_0_Forward failed!", HIKFLOW_STS_ERR_CUS_LAYER_FORWARD_FAILED);
 
   

@@ -1,9 +1,0 @@
-services:
-  camera-upload-server:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      CAMERA_UPLOAD_DIR: /data/uploads
-    volumes:
-      - "${CAMERA_UPLOAD_HOST_DIR:-./uploads}:/data/uploads"

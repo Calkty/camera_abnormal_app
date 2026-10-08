@@ -1,5 +1,6 @@
 #include "clip_writer.h"
 #include "config.h"
+#include "detect_overlay.h"
 #include "event_queue.h"
 #include "infer_adapter.h"
 #include "ring_buffer.h"
@@ -110,6 +111,11 @@ int main(int argc, char **argv)
            CA_ENABLE_UPLOAD, CA_ENABLE_INFER && CA_ENABLE_LEGACY_ALARM);
     ca_log("INFO", "camera_event_app start camera_id=%s rtsp=%s upload=%s",
            cfg.camera_id, cfg.rtsp_url, cfg.upload_url);
+#if CA_ENABLE_DETECT_OVERLAY
+    /* The page's "auto record" button pushes webm segments to the operator
+       server; hand out the configured address so main.js stays IP-free. */
+    ca_detect_overlay_set_upload_url(cfg.upload_url);
+#endif
     ca_debug_log(1, "config: pre=%ds post=%ds ring=%ds fps=%d max_events=%d codec=%d infer_interval=%ds model=%s abnormal_classes=%s",
                  cfg.pre_seconds, cfg.post_seconds, cfg.ring_seconds, cfg.fps, cfg.max_events,
                  cfg.codec, cfg.infer_interval_seconds,

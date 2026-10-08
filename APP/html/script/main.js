@@ -87,13 +87,26 @@ $(function () {
     initLiveView();
   }, 500);
   var rectCanvas = RectCanvas("liveviewCanvas");
-  rectCanvas.initRectCanvas(600, 450);
+  rectCanvas.initRectCanvas(1920, 1080);
 
   // detection boxes: separate layer, polled independently of the video player
   var detectOverlay = DetectOverlay("detectCanvas");
   detectOverlay.setEnabled($("#showDetectBox").is(":checked"));
   $("#showDetectBox").on("change", function () {
     detectOverlay.setEnabled(this.checked);
+  });
+
+  // 视频区按窗口大小等比缩放；resize 做 120ms 防抖
+  fitLiveview();
+  $("#fitWindow").on("change", function () {
+    fitLiveview();
+  });
+  var fitTimer = null;
+  $(window).on("resize", function () {
+    if (fitTimer) {
+      clearTimeout(fitTimer);
+    }
+    fitTimer = setTimeout(fitLiveview, 120);
   });
   $(window).on("beforeunload", function () {
     detectOverlay.stop();
@@ -365,6 +378,48 @@ $(function () {
     });
   }
 
+  /**
+   * 让视频区自适应窗口，解决「必须用浏览器缩放才能看全」的问题。
+   *
+   * 只加 CSS transform 缩放，**不改布局尺寸**：播放插件、规则画布、检测框图层
+   * 依旧工作在 1920x1080 坐标系里，canvas 的鼠标 offsetX 也不受 transform 影响，
+   * 所以规则绘制/拖动与检测框位置都不会错位。
+   */
+  function fitLiveview() {
+    var box = document.getElementById("liveviewScale");
+    var block = $(".liveviewBlock")[0];
+    if (!box || !block) {
+      return;
+    }
+    /* 取消勾选「适应窗口」= 回到原来的 1:1（放不下就靠页面滚动，不能裁掉画面） */
+    if (!$("#fitWindow").is(":checked")) {
+      block.style.transform = "";
+      box.style.width = "";
+      box.style.height = "";
+      box.style.overflow = "";
+      return;
+    }
+
+    var BASE_W = 1920;
+    var BASE_H = 1080;
+    /* 文档坐标系里的顶部偏移，与页面滚动位置无关 */
+    var top = box.getBoundingClientRect().top + (window.pageYOffset || 0);
+    var availW = document.documentElement.clientWidth - 40 - 16; /* .content 的 padding-left */
+    var availH = window.innerHeight - top - 16;
+    var scale = Math.min(availW / BASE_W, availH / BASE_H);
+
+    if (!isFinite(scale) || scale <= 0) {
+      return;
+    }
+    /* 不放大；最小缩到 25%，再小就没法点规则点了 */
+    scale = Math.min(1, Math.max(0.25, scale));
+    block.style.transform = "scale(" + scale + ")";
+    box.style.width = Math.round(BASE_W * scale) + "px";
+    box.style.height = Math.round(BASE_H * scale) + "px";
+    /* 缩放后画面才能刚好放进 wrapper，多出来的 1920 布局宽度必须裁掉 */
+    box.style.overflow = "hidden";
+  }
+
   /** use quicktime plugin */
   function initLiveView() {
     $("#liveview").html("");
@@ -379,10 +434,10 @@ $(function () {
     });
 
     //Please fill in the port number based on the actual parameters set by the device
-    let curPost = '102';
+    let curPost = '103';
     // Take the aisle or not
     if (currentChannel > 0) {
-      curPost = `${currentChannel}02`;
+      curPost = `${currentChannel}03`;
     }
     var szUrl = "ws://" + HOST + ":7681/" + curPost;
     console.log("🚀 ~ initLiveView ~ szUrl:", szUrl);
@@ -390,6 +445,8 @@ $(function () {
       sessionID: AUTH,
       token: AUTH
     }, 0);
+    /* 插件可能改动 #liveview 尺寸，重新算一次以保持贴合 */
+    fitLiveview();
   }
   
   /** draw rect on canvas */
@@ -934,6 +991,13 @@ $(function () {
       lastOkMs = new Date().getTime();
       failures = 0;
 
+      /* 录屏上报地址由设备从 app.conf 的 upload_url 派生后下发，换服务器不用改前
+         端。它不依赖 seq，所以要在下面的 seq 判断之前取。 */
+      if (oJson && oJson.recordUrl && oJson.recordUrl !== window.CA_RECORD_URL) {
+        window.CA_RECORD_URL = oJson.recordUrl;
+        console.log("[record] device recordUrl = " + oJson.recordUrl);
+      }
+
       var data = oJson && oJson.cameraAbnormalDetections;
       /* seq 0 means the device has not published a detection yet. */
       if (!data || data.seq === undefined || data.seq === 0) {
@@ -1221,4 +1285,90 @@ $(function () {
     detectOverlay.setEnabled(bEnable);
   };
   window.demoInterface = demoInterface;
+});
+
+$(function(){
+  function rlog(m){ try{ console.log("[record] " + m); }catch(e){} }
+
+  var btn = document.createElement("button");
+  btn.id = "btnAutoRecord";
+  btn.textContent = "自动录制";
+  btn.style.cssText = "position:fixed;right:16px;top:16px;z-index:9999;padding:8px 14px;background:#d71920;color:#fff;border:none;border-radius:2px;cursor:pointer;";
+  document.body.appendChild(btn);
+  rlog("auto button added");
+
+  /* 兜底地址。实际优先用设备在检测接口里下发的 recordUrl（由 app.conf 的
+     upload_url 派生），所以换服务器只改 app.conf，不用改这个文件。 */
+  var RECORD_URL = "http://192.168.1.3:8080/api/record";
+
+  function recordUrl(){
+    return window.CA_RECORD_URL || RECORD_URL;
+  }
+  var SEGMENT_MS = 30000;
+  var videoCanvas = null, recCanvas = null, recCtx = null, stream = null;
+  var recorder = null, chunks = [], autoOn = false, tickTimer = null, segTimer = null;
+
+  function findVideoCanvas(){
+    var c = document.querySelector("#liveview canvas");
+    if (c) { videoCanvas = c; return true; }
+    return false;
+  }
+
+  function tick(){
+    if (!autoOn || !recCtx) return;
+    recCtx.clearRect(0,0,1920,1080);
+    if (videoCanvas) recCtx.drawImage(videoCanvas, 0, 0, 1920, 1080);
+    var det = document.getElementById("detectCanvas");
+    if (det) recCtx.drawImage(det, 0, 0, 1920, 1080);
+  }
+
+  function upload(blob){
+    var fd = new FormData();
+    fd.append("video", blob, "seg_" + Date.now() + ".webm");
+    rlog("upload " + blob.size + " bytes -> " + recordUrl());
+    fetch(recordUrl(), { method: "POST", body: fd })
+      .then(function(r){ rlog("uploaded status=" + r.status); })
+      .catch(function(e){ rlog("upload error " + e.message); });
+  }
+
+  function startSegment(){
+    chunks = [];
+    recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+    recorder.ondataavailable = function(e){ if (e.data && e.data.size) chunks.push(e.data); };
+    recorder.onstop = function(){
+      var blob = new Blob(chunks, { type: "video/webm" });
+      if (blob.size > 0) upload(blob);
+      if (autoOn) setTimeout(startSegment, 300);
+    };
+    recorder.start();
+    segTimer = setTimeout(function(){ if (recorder && recorder.state !== "inactive") recorder.stop(); }, SEGMENT_MS);
+  }
+
+  btn.onclick = function(){
+    try {
+      if (!autoOn){
+        if (!findVideoCanvas()) { alert("未找到视频画面"); return; }
+        if (typeof HTMLCanvasElement.prototype.captureStream !== "function") { alert("当前浏览器不支持录制"); return; }
+        recCanvas = document.createElement("canvas");
+        recCanvas.width = 1920; recCanvas.height = 1080;
+        recCtx = recCanvas.getContext("2d");
+        stream = recCanvas.captureStream(30);
+        autoOn = true;
+        btn.textContent = "停止自动录制";
+        tickTimer = setInterval(tick, 33);
+        startSegment();
+        rlog("auto started");
+      } else {
+        autoOn = false;
+        btn.textContent = "自动录制";
+        clearInterval(tickTimer);
+        if (segTimer) clearTimeout(segTimer);
+        if (recorder && recorder.state !== "inactive") recorder.stop();
+        rlog("auto stopped");
+      }
+    } catch(e) {
+      alert("录制出错: " + e.message);
+      rlog("error: " + e.message);
+    }
+  };
 });

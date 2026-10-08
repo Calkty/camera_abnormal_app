@@ -22,11 +22,18 @@
         color: #656565;
       }
 
+      /* 视频区仍按 1920x1080 布局：播放插件、规则画布、检测框叠加层都用这个
+         坐标系（规则坐标又归一化到 1000x1000）。窗口放不下时由 #liveviewScale
+         加 CSS transform 等比缩小，见 main.js 的 fitLiveview()。 */
       #liveview {
-        width: 600px;
-        height: 450px;
-        margin: 20px 0;
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
         background: #343434;
+      }
+
+      #liveviewScale {
+        margin: 20px 0;
       }
 
       .drawButtons {
@@ -62,6 +69,7 @@
 
       .liveviewBlock {
         position: relative;
+        transform-origin: 0 0;
       }
 
       /* Detection boxes sit between the video and the rule-editing layer.
@@ -70,8 +78,8 @@
         background-color: transparent;
         border: none;
         position: absolute;
-        width: 600px;
-        height: 450px;
+        width: 1920px;
+        height: 1080px;
         top: 0px;
         pointer-events: none;
       }
@@ -80,16 +88,16 @@
         background-color: transparent;
         border: none;
         position: absolute;
-        width: 600px;
-        height: 450px;
+        width: 1920px;
+        height: 1080px;
         top: 0px;
       }
 
       .liveviewShadow {
         border: none;
         position: absolute;
-        width: 600px;
-        height: 450px;
+        width: 1920px;
+        height: 1080px;
         top: 0px;
         background: url(transparent.png);
       }
@@ -186,20 +194,26 @@
           <input id="showDetectBox" type="checkbox" class="checkbox" checked />
           <label class="check-label">显示检测框</label>
         </span>
+        <span class="margin-left5">
+          <input id="fitWindow" type="checkbox" class="checkbox" checked />
+          <label class="check-label">适应窗口</label>
+        </span>
       </div>
-      <div class="liveviewBlock">
-        <div id="liveview"></div>
-        <iframe
-          id="liveviewShadow"
-          class="liveviewShadow"
-          src="transparent.html"
-          frameborder="0"
-          scrolling="no"
-          allowtransparency="true"
-        ></iframe>
-        <!-- Painted before liveviewCanvas so the rule polygon stays on top. -->
-        <canvas id="detectCanvas" width="600" height="450"></canvas>
-        <canvas id="liveviewCanvas" width="600" height="450"></canvas>
+      <div id="liveviewScale">
+        <div class="liveviewBlock">
+          <div id="liveview"></div>
+          <iframe
+            id="liveviewShadow"
+            class="liveviewShadow"
+            src="transparent.html"
+            frameborder="0"
+            scrolling="no"
+            allowtransparency="true"
+          ></iframe>
+          <!-- Painted before liveviewCanvas so the rule polygon stays on top. -->
+          <canvas id="detectCanvas" width="1920" height="1080"></canvas>
+          <canvas id="liveviewCanvas" width="1920" height="1080"></canvas>
+        </div>
       </div>
       <div class="drawButtons">
         <span>

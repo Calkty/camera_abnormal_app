@@ -26,6 +26,8 @@ typedef struct {
     int upload_retry_interval_ms;
     int cooldown_seconds;
     int infer_interval_seconds;
+    int confirm_window_m;
+    int confirm_require_n;
     CodecType codec;
     int fps;
     int debug_level;

@@ -55,4 +55,19 @@ int ca_detect_overlay_publish(const CaDetBox *boxes, int count, int frame_w,
 /*!< Copy the current snapshot. Yields seq == 0, count == 0 before the first publish. */
 void ca_detect_overlay_get(CaDetSnapshot *out);
 
+/**
+ * @brief  Publish the configured upload endpoint (app.conf `upload_url`).
+ *
+ * The web page offers an "auto record" button that pushes its own webm
+ * segments to the operator server, so that address must have exactly one
+ * source of truth. The page reads it back through the detections endpoint
+ * instead of hardcoding an operator IP inside main.js. Call once after
+ * config_load(); an unusable URL keeps the page on its built-in fallback.
+ */
+void ca_detect_overlay_set_upload_url(const char *upload_url);
+
+/*!< Copy the upload URL with its last path segment replaced by "record".
+     Returns CA_ERR, and writes an empty string, when none was published. */
+int ca_detect_overlay_get_record_url(char *out, size_t out_len);
+
 #endif

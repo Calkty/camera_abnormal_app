@@ -10,6 +10,7 @@ typedef struct {
     int64_t detect_done_ms;
     int channel;
     float confidence;
+    int class_id;
     char event_type[CA_MAX_EVENT_TYPE];
 } AbnormalEvent;
 
