@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="380" viewBox="0 0 1280 380" role="img">
+  <defs>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#ffffff" stroke-opacity="0.045" stroke-width="1"/></pattern>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1220"/><stop offset="1" stop-color="#16233c"/></linearGradient>
+    <radialGradient id="rg2"><stop offset="0" stop-color="#2b6cb0" stop-opacity="0.34"/><stop offset="1" stop-color="#2b6cb0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="rg3"><stop offset="0" stop-color="#0f766e" stop-opacity="0.26"/><stop offset="1" stop-color="#0f766e" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect x="0" y="0" width="1280" height="380" rx="18" fill="url(#g1)"/>
+  <rect x="0" y="0" width="1280" height="380" rx="18" fill="url(#grid)"/>
+  <rect x="0.5" y="0.5" width="1279" height="379" rx="18" fill="none" stroke="#24334f" stroke-width="1.2"/>
+  <circle cx="1190" cy="30" r="330" fill="url(#rg2)"/>
+  <circle cx="60" cy="410" r="290" fill="url(#rg3)"/>
+  <text x="64" y="99" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="44" fill="#f8fafc" font-weight="700" text-anchor="start">camera_abnormal_app</text>
+  <text x="64" y="140" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="22" fill="#8fb0d9" text-anchor="start">海康 HEOP 球机 · 端侧异常事件检测与切片上报</text>
+  <text x="64" y="178" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#b9c8dd" text-anchor="start">从 NPU 推理到事件切片，再到网页实时叠加检测框 —— 全链路在设备侧闭环，不依赖外部分析服务。</text>
+  <rect x="64" y="214" width="157" height="32" rx="16" fill="#132038" stroke="#2c3f5e" stroke-width="1.1"/>
+  <text x="78" y="235.875" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#9fc4ef" font-weight="700" text-anchor="start">HEOP · H9 / NPU0</text>
+  <rect x="233" y="214" width="90" height="32" rx="16" fill="#132038" stroke="#2c3f5e" stroke-width="1.1"/>
+  <text x="247" y="235.875" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#9fc4ef" font-weight="700" text-anchor="start">C · Make</text>
+  <rect x="335" y="214" width="118" height="32" rx="16" fill="#132038" stroke="#2c3f5e" stroke-width="1.1"/>
+  <text x="349" y="235.875" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#9fc4ef" font-weight="700" text-anchor="start">六模块可裁剪</text>
+  <rect x="465" y="214" width="172" height="32" rx="16" fill="#132038" stroke="#2c3f5e" stroke-width="1.1"/>
+  <text x="479" y="235.875" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#9fc4ef" font-weight="700" text-anchor="start">HTTP multipart 上报</text>
+  <polyline points="64,288 1216,288" fill="none" stroke="#22304a" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="64" y="344" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="30" fill="#7dd3fc" font-weight="700" text-anchor="start">3.7 MB</text>
+  <text x="64" y="367" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#7f93ad" text-anchor="start">模型体积</text>
+  <text x="356" y="344" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="30" fill="#7dd3fc" font-weight="700" text-anchor="start">6 类</text>
+  <text x="356" y="367" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#7f93ad" text-anchor="start">异常目标</text>
+  <rect x="322" y="312" width="1.2" height="56" rx="0" fill="#22304a"/>
+  <text x="648" y="344" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="30" fill="#7dd3fc" font-weight="700" text-anchor="start">250 ms</text>
+  <text x="648" y="367" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#7f93ad" text-anchor="start">检测框轮询</text>
+  <rect x="614" y="312" width="1.2" height="56" rx="0" fill="#22304a"/>
+  <text x="940" y="344" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="30" fill="#7dd3fc" font-weight="700" text-anchor="start">1920×1080</text>
+  <text x="940" y="367" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#7f93ad" text-anchor="start">主码流坐标</text>
+  <rect x="906" y="312" width="1.2" height="56" rx="0" fill="#22304a"/>
+</svg>

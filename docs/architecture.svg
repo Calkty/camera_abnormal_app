@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="872" viewBox="0 0 1280 872" role="img">
+  <defs>
+    <linearGradient id="g0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#eef2f7"/></linearGradient>
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.07"/></filter>
+  </defs>
+  <rect x="0" y="0" width="1280" height="872" rx="18" fill="url(#g0)"/>
+  <rect x="0.5" y="0.5" width="1279" height="871" rx="18" fill="none" stroke="#dde5ee" stroke-width="1.0"/>
+  <text x="40" y="56" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="30" fill="#0f172a" font-weight="700" text-anchor="start">端侧异常事件流水线</text>
+  <text x="40" y="84" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="17" fill="#64748b" text-anchor="start">推理不解码 RTSP · 录像不经过 NPU · 采集到上报全链路在设备侧闭环</text>
+  <rect x="32" y="106" width="700" height="674" rx="18" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+  <rect x="54" y="123" width="10" height="10" rx="3" fill="#2563eb"/>
+  <text x="72" y="139" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="19" fill="#334155" font-weight="700" text-anchor="start">设备侧 · HEOP 应用（单进程 · 多线程）</text>
+  <text x="56" y="164" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="17" fill="#2563eb" font-weight="700" text-anchor="start">通道 A · 推理与事件</text>
+  <rect x="56" y="174" width="194" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="56" y="174" width="4.5" height="76" rx="2.25" fill="#2563eb"/>
+  <text x="69" y="207" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">VIN 原始帧</text>
+  <text x="69" y="229.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#64748b" text-anchor="start">NV21 · 硬件直出</text>
+  <rect x="281" y="174" width="194" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="281" y="174" width="4.5" height="76" rx="2.25" fill="#2563eb"/>
+  <text x="294" y="207" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">mscale → HIKFlow</text>
+  <text x="294" y="229.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#64748b" text-anchor="start">NPU 推理 · 6 类</text>
+  <polyline points="256,212 276,212" fill="none" stroke="#2563eb" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="276,212 267,207.4 267,216.6" fill="#2563eb"/>
+  <rect x="506" y="174" width="194" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="506" y="174" width="4.5" height="76" rx="2.25" fill="#2563eb"/>
+  <text x="519" y="207" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">多帧确认 M/N</text>
+  <text x="519" y="229.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#64748b" text-anchor="start">冷却过滤 → 事件桥</text>
+  <polyline points="481,212 501,212" fill="none" stroke="#2563eb" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="501,212 492,207.4 492,216.6" fill="#2563eb"/>
+  <text x="56" y="300" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="17" fill="#059669" font-weight="700" text-anchor="start">通道 B · 录像与缓存</text>
+  <rect x="56" y="310" width="194" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="56" y="310" width="4.5" height="76" rx="2.25" fill="#059669"/>
+  <text x="69" y="343" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">自拉 RTSP 主码流</text>
+  <text x="69" y="365.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#64748b" text-anchor="start">RTP over TCP</text>
+  <rect x="281" y="310" width="194" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="281" y="310" width="4.5" height="76" rx="2.25" fill="#059669"/>
+  <text x="294" y="343" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">H.264 / H.265 解析</text>
+  <text x="294" y="365.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#64748b" text-anchor="start">Annex-B · FU / STAP</text>
+  <polyline points="256,348 276,348" fill="none" stroke="#059669" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="276,348 267,343.4 267,352.6" fill="#059669"/>
+  <rect x="506" y="310" width="194" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="506" y="310" width="4.5" height="76" rx="2.25" fill="#059669"/>
+  <text x="519" y="343" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">环形缓存</text>
+  <text x="519" y="365.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#64748b" text-anchor="start">时间戳 · 双上限淘汰</text>
+  <polyline points="481,348 501,348" fill="none" stroke="#059669" stroke-width="2.0" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="501,348 492,343.4 492,352.6" fill="#059669"/>
+  <rect x="56" y="420" width="560" height="96" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="56" y="420" width="4.5" height="96" rx="2.25" fill="#7c3aed"/>
+  <text x="72" y="458" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="20" fill="#0f172a" font-weight="700" text-anchor="start">event_clip_thread · 事件切片</text>
+  <rect x="70" y="474" width="164" height="28" rx="14" fill="#f5f1ff" stroke="#ddd0ff" stroke-width="1.1"/>
+  <text x="81" y="493.55" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="14" fill="#6d28d9" font-weight="700" text-anchor="start">回捞前段 pre_seconds</text>
+  <rect x="243" y="474" width="171" height="28" rx="14" fill="#f5f1ff" stroke="#ddd0ff" stroke-width="1.1"/>
+  <text x="254" y="493.55" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="14" fill="#6d28d9" font-weight="700" text-anchor="start">等待后段 post_seconds</text>
+  <rect x="423" y="474" width="231" height="28" rx="14" fill="#f5f1ff" stroke="#ddd0ff" stroke-width="1.1"/>
+  <text x="434" y="493.55" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="14" fill="#6d28d9" font-weight="700" text-anchor="start">关键帧对齐 + 注入 SPS/PPS/VPS</text>
+  <polyline points="560,250 560,260 44,260 44,448 56,448" fill="none" stroke="#7c3aed" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="56,448 47,443.4 47,452.6" fill="#7c3aed"/>
+  <polyline points="520,386 520,420" fill="none" stroke="#7c3aed" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="520,420 524.6,411 515.4,411" fill="#7c3aed"/>
+  <rect x="56" y="560" width="290" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="56" y="560" width="4.5" height="76" rx="2.25" fill="#0ea5e9"/>
+  <text x="71" y="596" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="19" fill="#0f172a" font-weight="700" text-anchor="start">upload_thread</text>
+  <text x="71" y="619.55" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#475569" text-anchor="start">multipart · 重试 · 2xx 确认</text>
+  <rect x="394" y="560" width="306" height="76" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="394" y="560" width="4.5" height="76" rx="2.25" fill="#f59e0b"/>
+  <text x="409" y="596" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="19" fill="#0f172a" font-weight="700" text-anchor="start">detect_overlay</text>
+  <text x="409" y="619.55" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#475569" text-anchor="start">检测框快照 · ISAPI 端点</text>
+  <polyline points="201,516 201,560" fill="none" stroke="#0ea5e9" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="201,560 205.6,551 196.4,551" fill="#0ea5e9"/>
+  <polyline points="690,250 716,250 716,538 600,538 600,560" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+  <polygon points="600,560 604.6,551 595.4,551" fill="#f59e0b"/>
+  <text x="556" y="290" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#b45309" text-anchor="start">检测框快照 → ISAPI 端点</text>
+  <rect x="756" y="106" width="492" height="336" rx="18" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+  <rect x="778" y="123" width="10" height="10" rx="3" fill="#b45309"/>
+  <text x="796" y="139" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="19" fill="#334155" font-weight="700" text-anchor="start">网页端 · APP/html</text>
+  <rect x="780" y="160" width="444" height="46" rx="10" fill="#fffdf7" stroke="#f3e2c0" stroke-width="1.0"/>
+  <text x="796" y="189" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#b45309" font-weight="700" text-anchor="start">播放</text>
+  <text x="852" y="189" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#475569" text-anchor="start">海康播放器插件 · ws://&lt;设备IP&gt;:7681/&lt;通道03&gt;</text>
+  <rect x="780" y="218" width="444" height="46" rx="10" fill="#fffdf7" stroke="#f3e2c0" stroke-width="1.0"/>
+  <text x="796" y="247" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#b45309" font-weight="700" text-anchor="start">叠加</text>
+  <text x="852" y="247" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#475569" text-anchor="start">轮询 ISAPI 250ms → canvas 画绿框</text>
+  <rect x="780" y="276" width="444" height="46" rx="10" fill="#fffdf7" stroke="#f3e2c0" stroke-width="1.0"/>
+  <text x="796" y="305" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#b45309" font-weight="700" text-anchor="start">规则</text>
+  <text x="852" y="305" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#475569" text-anchor="start">多边形归一化 1000×1000 · 中心点判定</text>
+  <rect x="780" y="334" width="444" height="46" rx="10" fill="#fffdf7" stroke="#f3e2c0" stroke-width="1.0"/>
+  <text x="796" y="363" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#b45309" font-weight="700" text-anchor="start">录屏</text>
+  <text x="852" y="363" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#475569" text-anchor="start">视频 + 检测框录 webm · 每 30s 上传</text>
+  <rect x="756" y="470" width="492" height="310" rx="18" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+  <rect x="778" y="487" width="10" height="10" rx="3" fill="#0f766e"/>
+  <text x="796" y="503" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="19" fill="#334155" font-weight="700" text-anchor="start">外部服务器 · 落盘与转封装</text>
+  <rect x="780" y="512" width="444" height="72" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="780" y="512" width="4.5" height="72" rx="2.25" fill="#0f766e"/>
+  <text x="793" y="545" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">POST /api/record</text>
+  <text x="793" y="567.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#475569" text-anchor="start">webm 分片（VP8/VP9）→ 转码 mp4</text>
+  <text x="800" y="627" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#475569" text-anchor="start">· 落盘 &lt;时间戳ms&gt;/event.json + event.h264|h265</text>
+  <text x="800" y="657" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#475569" text-anchor="start">· ffmpeg -c copy 封装为 event.mp4</text>
+  <text x="800" y="687" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#475569" text-anchor="start">· 返回 2xx → 设备端删除本地切片</text>
+  <rect x="780" y="700" width="444" height="68" rx="11" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2" filter="url(#dropShadow)"/>
+  <rect x="780" y="700" width="4.5" height="68" rx="2.25" fill="#0f766e"/>
+  <text x="793" y="733" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="18" fill="#0f172a" font-weight="700" text-anchor="start">POST /api/upload</text>
+  <text x="793" y="755.1" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#475569" text-anchor="start">event.json + H.264/H.265 原始码流</text>
+  <polyline points="201,636 201,740 780,740" fill="none" stroke="#0ea5e9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="780,740 771,735.4 771,744.6" fill="#0ea5e9"/>
+  <text x="240" y="770" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#0284c7" font-weight="700" text-anchor="start">HTTP multipart 上报（含重试与 2xx 确认）</text>
+  <polyline points="700,620 750,620 750,242 780,242" fill="none" stroke="#b45309" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 4"/>
+  <polygon points="780,242 771,237.4 771,246.6" fill="#b45309"/>
+  <polyline points="1000,442 1000,470" fill="none" stroke="#0f766e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="1000,470 1004.6,461 995.4,461" fill="#0f766e"/>
+  <text x="1006" y="464" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="15" fill="#0f766e" text-anchor="start">webm 分片 → /api/record</text>
+  <text x="40" y="843" font-family='"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", sans-serif' font-size="16" fill="#64748b" text-anchor="start">推理走 VIN 原始帧，RTSP 只用于编码录像；环形缓存只存压缩数据，按时间与内存双上限淘汰。</text>
+</svg>
